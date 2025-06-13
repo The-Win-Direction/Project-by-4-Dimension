@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUserCircle } from 'react-icons/fa'; // Profile icon
+import { FaUserCircle } from 'react-icons/fa';
 import logo from '../assets/logo01.png';
+import { NavLink } from 'react-router-dom';
+
 
 function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -35,12 +37,27 @@ function Header() {
 
         {/* Navigation */}
         <nav className="flex gap-16 text-lg font-medium text-gray-700">
-          <Link to="/" className="hover:text-green-600 transition">Home</Link>
-          <Link to="/chatbot" className="hover:text-green-600 transition">Chatbot</Link>
-          <Link to="/ai" className="hover:text-green-600 transition">AI</Link>
-          <Link to="/about" className="hover:text-green-600 transition">About</Link>
-          <Link to="/knowledge" className="hover:text-green-600 transition">Knowledge</Link>
+          {[
+            { to: '/', label: 'Home' },
+            { to: '/chatbot', label: 'Chatbot' },
+            { to: '/ai', label: 'AI' },
+            { to: '/about', label: 'About' },
+            { to: '/knowledge', label: 'Knowledge' },
+          ].map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                isActive
+                  ? 'border-b-2 border-green-600 text-green-700 transition'
+                  : 'hover:text-green-600 transition'
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
         </nav>
+
 
         {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
