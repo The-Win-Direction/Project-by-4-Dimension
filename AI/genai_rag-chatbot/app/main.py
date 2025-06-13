@@ -33,6 +33,14 @@ def set_custom_prompt(template):
 
 app = FastAPI(title="RAG-based QA with Gemini & FAISS")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Load embedding model and FAISS DB
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,

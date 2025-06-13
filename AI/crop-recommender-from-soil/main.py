@@ -19,6 +19,14 @@ crop_dict = {
 # FastAPI app
 app = FastAPI(title="Crop Prediction API", version="1.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Input model with validation
 class CropInput(BaseModel):
     N: int = Field(..., ge=0, le=140, description="Nitrogen (0-140)")
