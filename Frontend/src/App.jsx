@@ -5,14 +5,13 @@ import Home from './Pages/Home';
 import Chatbot from './Pages/Chatbot';
 import AI from './Pages/AI';
 import About from './Pages/About';
-import Knowledge from './Pages/Knowledge';
 import Login from './Pages/Login';
 import MarketPrice from './Pages/MarketPrice';
 import SignUp from './Pages/SignUp';
 import CropPrediction from './Pages/CropPrediction';
 import ShareYourStory from './Pages/ShareYourStory';
-
 import ProtectedRoute from './Components/ProtectedRoute';
+import SuccessStories from './Pages/SuccessStories';
 
 function App() {
   return (
@@ -49,10 +48,10 @@ function App() {
           }
         />
         <Route
-          path="/knowledge"
+          path="/success-stories"
           element={
             <ProtectedRoute>
-              <Knowledge />
+              <SuccessStories/>
             </ProtectedRoute>
           }
         />

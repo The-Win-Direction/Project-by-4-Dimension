@@ -42,7 +42,7 @@ function Header() {
             { to: '/chatbot', label: 'Chatbot' },
             { to: '/ai', label: 'AI' },
             { to: '/about', label: 'About' },
-            { to: '/knowledge', label: 'Knowledge' },
+            { to: '/success-stories', label: 'Success Stories' },
           ].map(({ to, label }) => (
             <NavLink
               key={to}
