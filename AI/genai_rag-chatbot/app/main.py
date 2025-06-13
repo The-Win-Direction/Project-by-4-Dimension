@@ -13,7 +13,7 @@ DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
-# --- CUSTOM PROMPT TEMPLATE FOR KRISHIGPT ASSISTANT ---
+# --- CUSTOM PROMPT FOR KRISHIGPT ---
 KRISHI_PROMPT = """
 You are *KrishiGPT*, an expert AI assistant trained to support farmers, agriculture officers, and students in Nepal.
 
@@ -26,8 +26,8 @@ Rules:
 - Use paragraph format for explanations, definitions, or advice.
 - Prefer agricultural terms used in Nepal.
 
-🗣️ **If user requests Nepali** (e.g., “in Nepali”, “Nepali ma bhan”, etc):
-  → If context is in English, **translate your answer** to Nepali.
+🗣️ If user requests Nepali (e.g., “in Nepali”, “Nepali ma bhan”, etc):
+  → If context is in English, translate your answer to Nepali.
   → If context is already in Nepali, reply in Nepali directly.
 
 Otherwise, reply in clear English.
@@ -50,13 +50,13 @@ app = FastAPI(title="KrishiGPT Assistant Bot API", version="2.0")
 # --- ENABLE CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace "*" with specific frontend URL in production
+    allow_origins=["*"],  # Replace "*" with your frontend domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- EMBEDDING + DB LOAD ---
+# --- LOAD EMBEDDING MODEL + VECTOR DB ---
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
     google_api_key=API_KEY
@@ -67,16 +67,16 @@ try:
 except Exception as e:
     raise RuntimeError(f"Failed to load FAISS vectorstore: {e}")
 
-# --- LOAD LLM ---
+# --- LOAD LLM MODEL ---
 llm = ChatGoogleGenerativeAI(
     model=MODEL_NAME,
     google_api_key=API_KEY
 )
 
-# --- BUILD QA CHAIN ---
+# --- BUILD RETRIEVAL QA CHAIN ---
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
-    chain_type="stuff",
+    chain_type="map_reduce",  # Better reasoning than 'stuff'
     retriever=db.as_retriever(search_kwargs={'k': 6}),
     return_source_documents=True,
     chain_type_kwargs={'prompt': set_custom_prompt(KRISHI_PROMPT)}
@@ -87,13 +87,20 @@ class QueryRequest(BaseModel):
     query: str
     history: list[str] = []
 
-# --- API ENDPOINT ---
+# --- MAIN API ENDPOINT ---
 @app.post("/query", summary="Ask KrishiGPT about agriculture in Nepal")
 async def query_qa(request: QueryRequest):
     try:
-        # Optional: combine history into a full conversation prompt
-        full_prompt = "\n".join(request.history + [f"You: {request.query}"])
-        response = qa_chain.invoke({'query': full_prompt})
+        cleaned_query = request.query.strip().lower()
+        greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening"]
+
+        if cleaned_query in greetings:
+            return {
+                "response": "🌾 Namaste! I am KrishiGPT, your agricultural assistant. Ask me anything about crops, farming methods, fertilizers, or climate-specific advice for Nepal.",
+                "sources": []
+            }
+
+        response = qa_chain.invoke({'query': request.query})
 
         return {
             "response": response["result"],
