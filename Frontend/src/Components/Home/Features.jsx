@@ -28,8 +28,8 @@ const features = [
   },
   {
     icon: "📱",
-    title: "Platform Friendly",
-    description: "Access predictions and insights on any device, even in the field.",
+    title: "User Friendly",
+    description: "Access predictions and insights on any device, designed for farmers, built with tech.",
   },
 ];
 
@@ -37,12 +37,9 @@ const FeatureSection = () => {
   return (
     <section className="bg-green-50 py-16 px-6 md:px-20">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-8">
           Key Features
         </h2>
-        <p className="text-gray-600 mb-12">
-          Empowering farmers with AI-driven insights to make smarter decisions.
-        </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {features.map((feature, index) => (
@@ -51,10 +48,10 @@ const FeatureSection = () => {
               className="bg-green-600 p-6 rounded-2xl shadow hover:shadow-md transition"
             >
               <div className="text-green-600 text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-green-800 mb-2">
+              <h3 className="text-2xl font-bold text-white mb-2">
                 {feature.title}
               </h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-white">{feature.description}</p>
             </div>
           ))}
         </div>
