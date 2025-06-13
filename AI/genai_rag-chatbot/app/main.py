@@ -13,38 +13,38 @@ DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
-# --- PROMPT TEMPLATE ---
+# --- CUSTOM PROMPT TEMPLATE ---
 CUSTOM_PROMPT_TEMPLATE = """
-You are KrishiGPT, an agricultural assistant helping farmers by answering questions using accurate information from government PDFs, manuals, and policy documents.
+You are KrishiGPT, an expert agricultural assistant. You answer farmers' questions using verified government resources, schemes, and manuals.
 
-Previous Conversation:
 {history}
 
-Relevant Documents:
+Use the following context to answer the user's latest question:
+
+Context:
 {context}
 
-Question: {question}
+Question:
+{question}
 
-Answer in a simple, clear, and helpful manner tailored for farmers. If the answer is unclear from the documents, state that honestly and suggest consulting a local expert.
-
-Avoid chit-chat. Stick to facts based on the documents.
+Answer with only relevant factual information. If not sure, say you don’t know. Do not guess.
 """
 
 def set_custom_prompt(template):
     return PromptTemplate(template=template, input_variables=["context", "question", "history"])
 
-# --- APP INIT ---
-app = FastAPI(title="KrishiGPT - RAG Chatbot")
+# --- FASTAPI INITIALIZATION ---
+app = FastAPI(title="KrishiGPT: RAG-powered Agriculture QA")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- Load Vectorstore and Embeddings ---
+# --- LOAD EMBEDDINGS AND VECTORSTORE ---
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
     google_api_key=API_KEY
@@ -55,36 +55,35 @@ try:
 except Exception as e:
     raise RuntimeError(f"Failed to load FAISS vectorstore: {e}")
 
-# --- Load LLM ---
+# --- LOAD LLM ---
 llm = ChatGoogleGenerativeAI(
     model=MODEL_NAME,
     google_api_key=API_KEY
 )
 
-# --- Build QA Chain with Custom Prompt ---
+# --- BUILD QA CHAIN ---
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
     retriever=db.as_retriever(search_kwargs={'k': 3}),
     return_source_documents=True,
-    chain_type_kwargs={
-        "prompt": set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)
-    }
+    chain_type_kwargs={'prompt': set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)}
 )
 
-# --- Request Schema ---
+# --- REQUEST MODEL ---
 class QueryRequest(BaseModel):
     query: str
     history: str = ""
 
-# --- Endpoint ---
+# --- ROUTE ---
 @app.post("/query")
 async def query_qa(request: QueryRequest):
     try:
-        response = qa_chain.invoke({
-            "question": request.query,
+        inputs = {
+            "query": request.query,
             "history": request.history
-        })
+        }
+        response = qa_chain.invoke(inputs)
         return {
             "response": response["result"],
             "sources": [
@@ -94,6 +93,6 @@ async def query_qa(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
-# --- Run ---
+# --- MAIN ---
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
