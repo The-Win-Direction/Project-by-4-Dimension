@@ -20,17 +20,20 @@ function ChatPage() {
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
-    const history = messages
+    const chatHistory = messages
       .filter((msg) => msg.sender === 'user')
-      .map((msg) => msg.text);
+      .map((msg) => msg.text)
+      .join('\n');
+
+    const fullQuery = chatHistory
+      ? `${chatHistory}\n${query}`
+      : query;
 
     try {
       const res = await axios.post(API_URL, {
-        query,
-        history,
+        query: fullQuery,
       });
 
-   console.log(res.data)
       const botMessage = {
         sender: 'bot',
         text: res.data.response,
@@ -63,13 +66,17 @@ function ChatPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-6">
-        <h1 className="text-2xl font-bold text-green-700 mb-4 text-center">🌾 KrishiGPT: Agricultural Assistant</h1>
+        <h1 className="text-2xl font-bold text-green-700 mb-4 text-center">
+          🌾 KrishiGPT: Agricultural Assistant
+        </h1>
         <div className="h-[500px] overflow-y-auto space-y-4 border p-4 rounded-md bg-gray-50">
           {messages.map((msg, index) => (
             <div
               key={index}
               className={`p-3 rounded-lg whitespace-pre-line ${
-                msg.sender === 'user' ? 'bg-green-100 text-right' : 'bg-white text-left border'
+                msg.sender === 'user'
+                  ? 'bg-green-100 text-right'
+                  : 'bg-white text-left border'
               }`}
             >
               <p className="text-sm">
