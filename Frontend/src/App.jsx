@@ -8,6 +8,7 @@ import Knowledge from './Pages/Knowledge';
 import Login from './Pages/Login';
 import MarketPrice from './Pages/MarketPrice';
 import SignUp from './Pages/SignUp';
+import CropPrediction from './Pages/CropPrediction';
 function App() {
   return (
     <Router>
@@ -20,6 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/ai/price-prediction" element={<MarketPrice />} />
+        <Route path="/ai/crop-prediction" element={<CropPrediction />} />
       </Routes>
     </Router>
   );
