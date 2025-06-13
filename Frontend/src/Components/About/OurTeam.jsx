@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { FaLinkedin, FaFacebook, FaGithub } from 'react-icons/fa';
 import Dipaimg from '../../assets/dipaPic.JPG';
@@ -18,7 +17,7 @@ const teamMembers = [
       github: 'https://github.com/sameerbhatta',
     },
   },
-  {
+  { 
     name: 'Dipa Joshi',
     role: 'Frontend Developer ',
     desc: 'Designs clean, user-centric interfaces and crafts responsive frontend architecture.',
