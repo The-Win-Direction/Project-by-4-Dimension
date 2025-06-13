@@ -3,6 +3,7 @@ import WhoWeAre from '../Components/About/WhoWeAre';
 import OurMission from '../Components/About/OurMission';
 import WhatWeDo from '../Components/About/WhatWeDo';
 import OurTeam from '../Components/About/OurTeam';
+import Footer from '../Components/Footer';
 
 function About() {
   return (
@@ -12,6 +13,7 @@ function About() {
        <OurMission/>
        <WhatWeDo/>
        <OurTeam/>
+       <Footer/>
     </div>
   )
 }
