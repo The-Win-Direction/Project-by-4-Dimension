@@ -6,6 +6,7 @@ import AI from './Pages/AI';
 import About from './Pages/About';
 import Knowledge from './Pages/Knowledge';
 import Login from './Pages/Login';
+import MarketPrice from './Pages/MarketPrice';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/knowledge" element={<Knowledge />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/ai/price-prediction" element={<MarketPrice />} />
       </Routes>
     </Router>
   );
