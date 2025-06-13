@@ -5,45 +5,42 @@ import axios from 'axios';
 import image from '../assets/login.png';
 import { BACKEND_BASE_URL } from '../config';
 
-const Login = () => {
+export default function Signup() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
+    name: '',
     email: '',
     password: ''
   });
+
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
+    setForm({
+      ...form,
       [e.target.name]: e.target.value
-    }));
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
-    setSuccessMsg('');
+    setMessage('');
+    setError('');
 
     try {
-      const res = await axios.post(`${BACKEND_BASE_URL}/api/auth/signin`, formData);
-
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-
-      setSuccessMsg('✅ Login successful!');
-      navigate('/'); // Navigate to homepage
+      const response = await axios.post(`${BACKEND_BASE_URL}/api/auth/signup`, form);
+      setMessage(response.data.message);
+      setForm({ name: '', email: '', password: '' });
+      setTimeout(() => navigate('/'), 1000);
     } catch (err) {
-      const msg = err.response?.data?.message || '❌ Login failed. Please try again.';
-      setErrorMsg(msg);
+      setError(err.response?.data?.message || 'Signup failed. Try again.');
     } finally {
       setLoading(false);
-      setFormData({ email: '', password: '' });
     }
   };
 
@@ -52,16 +49,29 @@ const Login = () => {
       {/* Form Section */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-10 bg-white shadow-lg">
         <div className="w-full max-w-md space-y-6">
-          <h2 className="text-3xl font-bold text-green-700 text-center">Welcome Back 👋</h2>
-          <p className="text-center text-gray-500">Login to access your account</p>
+          <h2 className="text-3xl font-bold text-green-700 text-center">Create Account ✨</h2>
+          <p className="text-center text-gray-500">Sign up to get started</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-400"
+                placeholder="John Doe"
+              />
+            </div>
+
             <div>
               <label className="block text-sm text-gray-600 mb-1">Email</label>
               <input
                 type="email"
                 name="email"
-                value={formData.email}
+                value={form.email}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-400"
@@ -74,7 +84,7 @@ const Login = () => {
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
-                value={formData.password}
+                value={form.password}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 pr-10 border rounded-lg focus:ring-2 focus:ring-green-400"
@@ -89,21 +99,21 @@ const Login = () => {
             </div>
 
             {/* Feedback Messages */}
-            {errorMsg && <p className="text-red-600 text-sm font-medium">{errorMsg}</p>}
-            {successMsg && <p className="text-green-600 text-sm font-medium">{successMsg}</p>}
+            {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
+            {message && <p className="text-green-600 text-sm font-medium">{message}</p>}
 
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition duration-300 disabled:opacity-50"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Signing up...' : 'Sign Up'}
             </button>
 
             <p className="text-center text-sm text-gray-600">
-              Don’t have an account?{' '}
-              <Link to="/sign-up" className="text-green-600 hover:underline font-medium">
-                Sign up
+              Already have an account?{' '}
+              <Link to="/login" className="text-green-600 hover:underline font-medium">
+                Login
               </Link>
             </p>
           </form>
@@ -112,10 +122,8 @@ const Login = () => {
 
       {/* Image Section */}
       <div className="hidden md:flex w-full md:w-1/2 bg-green-100 items-center justify-center">
-        <img src={image} alt="Login Illustration" className="w-4/5" />
+        <img src={image} alt="Signup Illustration" className="w-4/5" />
       </div>
     </div>
   );
-};
-
-export default Login;
+}
