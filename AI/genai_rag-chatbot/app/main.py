@@ -111,8 +111,9 @@ async def query_krishi_gpt(request: QueryRequest):
 
         history_text = "\n".join(request.history)
 
+        # ✅ Use the correct input key expected by the PromptTemplate
         response = qa_chain.invoke({
-            "question": request.query,
+            "question": request.query,        # <-- This MUST match PromptTemplate input
             "history": history_text
         })
 
@@ -126,7 +127,7 @@ async def query_krishi_gpt(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
-# --- Run (optional if using uvicorn CLI) ---
 
+# --- Optional: CLI run ---
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
