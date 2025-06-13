@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'
 
 const API_URL = 'https://genai-rag-chatbot-4-dimension.onrender.com/query';
 
