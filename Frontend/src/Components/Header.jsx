@@ -43,7 +43,9 @@ function Header() {
             { to: '/ai', label: 'AI' },
             { to: '/about', label: 'About' },
             { to: '/success-stories', label: 'Success Stories' },
+
             { to: '/disease-detection', label: 'Detection' },
+
           ].map(({ to, label }) => (
             <NavLink
               key={to}
