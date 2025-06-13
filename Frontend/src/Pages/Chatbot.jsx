@@ -17,10 +17,11 @@ function Chatbot() {
     setLoading(true);
 
     try {
-      // Build chat history text array
-      const history = updatedMessages.map((msg) => `${msg.sender === 'user' ? 'You' : 'KrishiGPT'}: ${msg.text}`);
+      const history = updatedMessages
+        .filter(m => m.sender !== 'system')
+        .map(m => `${m.sender === 'user' ? 'You' : 'KrishiGPT'}: ${m.text}`);
 
-      const res = await axios.post('https://genai-rag-chatbot-4-dimension.onrender.com/query', {
+      const res = await axios.post('http://localhost:8000/query', {
         query,
         history
       });
@@ -47,7 +48,6 @@ function Chatbot() {
     if (e.key === 'Enter') sendMessage();
   };
 
-  // Scroll to bottom on new message
   useEffect(() => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;

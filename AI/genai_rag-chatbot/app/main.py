@@ -2,35 +2,32 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import uvicorn
 
 # --- CONFIG ---
-API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
+API_KEY = "YOUR_GOOGLE_API_KEY"
 DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
-# --- PROMPT ---
+# --- PROMPT TEMPLATE ---
 KRISHI_PROMPT = """
 You are *KrishiGPT*, an expert AI assistant trained to support farmers, agriculture officers, and students in Nepal.
 
 🧠 Respond with **accurate, context-based knowledge** ONLY from the documents provided.
-🌾 Focus your answers on practical use for Nepal's climate, soil, and seasonal farming needs.
+🌾 Focus on practical use for Nepal's climate, soil, and seasonal farming needs.
 
 Rules:
-- If context doesn't contain the answer, say: **"The answer is not available in the context."**
-- Use bullet points only for lists (steps, features, problems).
-- Use paragraph format for explanations, definitions, or advice.
-- Prefer agricultural terms used in Nepal.
+- If context doesn't contain the answer, respond **"❌ The answer is not available in the context."**
+- Use bullet points for lists.
+- Use paragraphs for explanations.
+- Prefer Nepali agricultural terms.
 
-🗣️ If user requests Nepali (e.g., “in Nepali”, “Nepali ma bhan”, etc):
-  → If context is in English, translate your answer to Nepali.
-  → If context is already in Nepali, reply in Nepali directly.
-
+🗣️ If user asks “in Nepali”, translate to Nepali.
 Otherwise, reply in clear English.
 
 📄 Context:
@@ -48,53 +45,65 @@ def set_custom_prompt(template):
 # --- FASTAPI APP ---
 app = FastAPI(title="KrishiGPT", version="1.0")
 
+# --- CORS Setup ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # lock this down in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- LOAD MODELS ---
-embedding_model = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL_NAME, google_api_key=API_KEY)
-db = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
+# --- Load Embeddings + DB + LLM ---
+emb = GoogleGenerativeAIEmbeddings(model=EMBEDDING_MODEL_NAME, google_api_key=API_KEY)
+db = FAISS.load_local(DB_FAISS_PATH, emb, allow_dangerous_deserialization=True)
 llm = ChatGoogleGenerativeAI(model=MODEL_NAME, google_api_key=API_KEY)
 
-qa_chain = ConversationalRetrievalChain.from_llm(
+# --- Build QA Chain with proper prompt key ---
+qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
-    retriever=db.as_retriever(search_kwargs={"k": 5}),
+    retriever=db.as_retriever(search_kwargs={"k": 6}),
     return_source_documents=True,
-    chain_type_kwargs={"prompt": set_custom_prompt(KRISHI_PROMPT)}
+    chain_type="map_reduce",
+    chain_type_kwargs={"combine_prompt": set_custom_prompt(KRISHI_PROMPT)}
 )
 
-# --- MODELS ---
+# --- Request Model ---
 class QueryRequest(BaseModel):
     query: str
     history: List[str] = []
 
-# --- ROUTES ---
+# --- API Endpoint ---
 @app.post("/query")
-async def query_krishigpt(request: QueryRequest):
+async def query_krishigpt(req: QueryRequest):
     try:
-        cleaned_query = request.query.strip().lower()
+        q = req.query.strip()
+        low = q.lower()
         greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening"]
 
-        if cleaned_query in greetings:
+        # Handle greetings
+        if low in greetings:
             return {
-                "response": "🌾 Namaste! I am KrishiGPT, your agricultural assistant. Ask me anything about crops, farming, or weather in Nepal.",
+                "response": "🌾 Namaste! I am KrishiGPT — your farming AI assistant. How can I help you today?",
                 "sources": []
             }
 
-        response = qa_chain.invoke({"question": request.query, "chat_history": request.history})
+        # Framing history + current query for context retrieval
+        combined = "\n".join(req.history + [f"You: {q}"])
+        docs = db.similarity_search(combined, k=6)
+        if not docs or all(not doc.page_content.strip() for doc in docs):
+            return {"response": "❌ The answer is not available in the context.", "sources": []}
+
+        # Invoke QA chain with raw question
+        res = qa_chain.invoke({"query": q})
+
         return {
-            "response": response["answer"],
-            "sources": [
-                {"source": doc.metadata.get("source", "unknown")} for doc in response["source_documents"]
-            ]
+            "response": res["result"],
+            "sources": [{"source": d.metadata.get("source", "unknown")} for d in res["source_documents"]]
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Query failed: {e}")
 
+# --- Launch App ---
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
