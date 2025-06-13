@@ -5,6 +5,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # --- CONFIG ---
 API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
@@ -43,7 +45,13 @@ def set_custom_prompt(template):
 
 # --- INIT ---
 app = FastAPI(title="KrishiGPT: Conversational RAG Assistant")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
     google_api_key=API_KEY
