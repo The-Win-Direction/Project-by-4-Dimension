@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo01.png';
 
 function Header() {
   return (
@@ -10,7 +10,7 @@ function Header() {
         {/* Logo Section */}
         <div className="flex items-center gap-4">
           <img src={logo} alt="Logo" className="h-16 w-16 object-cover rounded-full" />
-          <h1 className="text-3xl font-montserrat text-green-700">FarmFuse</h1>
+          {/* <h1 className="text-3xl font-montserrat text-green-700">FarmFuse</h1> */}
         </div>
 
         {/* Navigation */}
