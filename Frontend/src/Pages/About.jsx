@@ -6,7 +6,7 @@ function About() {
     <div>
       <Header/>
       About Us
-      <h2>about us and about our project</h2>
+      <h2 className='text-5xl'>about us and about our project</h2>
     </div>
   )
 }
