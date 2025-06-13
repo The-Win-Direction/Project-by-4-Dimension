@@ -30,8 +30,9 @@ Question:
 Answer with only relevant factual information. If not sure, say you don’t know. Do not guess.
 """
 
+# ✅ FIXED: Removed 'context' from input_variables
 def set_custom_prompt(template):
-    return PromptTemplate(template=template, input_variables=["context", "question", "history"])
+    return PromptTemplate(template=template, input_variables=["question", "history"])
 
 # --- FASTAPI INITIALIZATION ---
 app = FastAPI(title="KrishiGPT: RAG-powered Agriculture QA")
@@ -79,8 +80,9 @@ class QueryRequest(BaseModel):
 @app.post("/query")
 async def query_qa(request: QueryRequest):
     try:
+        # ✅ FIXED: Use 'question' instead of 'query' in chain input
         inputs = {
-            "query": request.query,
+            "question": request.query,
             "history": request.history
         }
         response = qa_chain.invoke(inputs)
