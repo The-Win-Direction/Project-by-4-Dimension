@@ -6,4 +6,4 @@ langchain-google-genai
 google-generativeai
 python-multipart
 transformers
-faiss-gpu
+faiss-cpu
