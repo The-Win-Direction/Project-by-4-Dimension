@@ -13,6 +13,9 @@ import ShareYourStory from './Pages/ShareYourStory';
 import ProtectedRoute from './Components/ProtectedRoute';
 import SuccessStories from './Pages/SuccessStories';
 
+import DiseaseDetection from './Pages/DiseaseDetection';
+
+
 function App() {
   return (
     <Router>
@@ -79,6 +82,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/disease-detection"
+          element={
+            <ProtectedRoute>
+              <DiseaseDetection />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </Router>
   );
