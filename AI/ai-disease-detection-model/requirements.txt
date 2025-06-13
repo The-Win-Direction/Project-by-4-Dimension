@@ -1,6 +1,5 @@
 fastapi
-pillow
-tensorflow
-python-dotenv
 uvicorn
+pillow
+tensorflow-cpu
 numpy
