@@ -2,7 +2,7 @@ import React from 'react'
 import Header from '../Components/Header'
 
 function DiseaseDetection() {
-  return (
+  return
     <div>
         <Header/>
       ddd
