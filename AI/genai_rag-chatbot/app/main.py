@@ -7,45 +7,30 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 import uvicorn
 
 # --- CONFIG ---
-
-API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
+API_KEY = "YOUR_API_KEY_HERE"
 DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
 # --- CUSTOM PROMPT ---
-
 CUSTOM_PROMPT_TEMPLATE = """
-You are an agricultural expert assistant for farmers and officials in Nepal.
+You are KrishiGPT, a friendly and knowledgeable agricultural assistant for farmers and officials in Nepal.
 
-You must answer based only on the given context and conversation history. If the answer is not in the context, reply: "The information is not available in the provided context."
+Respond in a warm, conversational, and helpful tone.
 
-Use *paragraph format* for definitions and explanations. Use *bullet points* for steps, lists, advantages, etc.
+Use only the provided context to answer specific agricultural or policy-related questions. If the answer is not found in the context, reply gently like:
+"The information isn't available in the documents I have, but I'm here to help in any other way!"
 
-If the user says things like "answer in Nepali", give the answer in Nepali (translate if needed).
+Use *paragraph format* for general explanations and *bullet points* when listing steps or features.
 
----You are *KrishiGPT*, an expert AI assistant trained to support farmers, agriculture officers, and students in Nepal.
+If user says things like “hi”, “hello”, “namaste”, or asks about you — give a friendly assistant-style reply.
 
-🧠 Respond with **accurate, context-based knowledge** ONLY from the documents provided.
-🌾 Focus your answers on practical use for Nepal's climate, soil, and seasonal farming needs.
-
-Rules:
-- If context doesn't contain the answer, say: **"The answer is not available in the context."**
-- Use bullet points only for lists (steps, features, problems).
-- Use paragraph format for explanations, definitions, or advice.
-- Prefer agricultural terms used in Nepal.
-
-🗣️ If user requests Nepali (e.g., “in Nepali”, “Nepali ma bhan”, etc):
-  → If context is in English, translate your answer to Nepali.
-  → If context is already in Nepali, reply in Nepali directly.
-
-Otherwise, reply in clear English.
+If the user asks for Nepali:
+- Translate the answer to Nepali if context is in English.
+- Respond in Nepali directly if context already is.
 
 Context:
 {context}
-
-History:
-{history}
 
 User Question:
 {question}
@@ -54,13 +39,10 @@ Answer:
 """
 
 def set_custom_prompt(template):
-    return PromptTemplate(template=template, input_variables=["context", "history", "question"])
+    return PromptTemplate(template=template, input_variables=["context", "question"])
 
-# --- APP INIT ---
-
-app = FastAPI(title="KrishiGPT – Agricultural QA System")
-
-# --- Load Embeddings and Vectorstore ---
+# --- INIT ---
+app = FastAPI(title="KrishiGPT: Conversational RAG Assistant")
 
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
@@ -72,53 +54,54 @@ try:
 except Exception as e:
     raise RuntimeError(f"Failed to load FAISS vectorstore: {e}")
 
-# --- Load Gemini Model ---
-
 llm = ChatGoogleGenerativeAI(
     model=MODEL_NAME,
     google_api_key=API_KEY
 )
 
-# --- Build RAG Chain ---
-
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=db.as_retriever(search_kwargs={"k": 7}),
+    retriever=db.as_retriever(search_kwargs={'k': 7}),
     return_source_documents=True,
-    chain_type_kwargs={"prompt": set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)}
+    chain_type_kwargs={'prompt': set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)}
 )
 
-# --- Request Model ---
+# --- MODELS ---
 
 class QueryRequest(BaseModel):
     query: str
-    history: list[str] = []
 
-# --- Main Route ---
+# --- CHAT HISTORY SUPPORT (In-memory for now) ---
+chat_history = []
+
+# --- ROUTES ---
 
 @app.post("/query")
-async def query_krishi_gpt(request: QueryRequest):
+async def query_qa(request: QueryRequest):
+    user_query = request.query.strip()
+
+    greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening", "what’s up", "who are you"]
+    if user_query.lower() in greetings or "your name" in user_query.lower():
+        return {
+            "response": "Namaste! 👋 I'm KrishiGPT – your helpful assistant for all things agriculture in Nepal. How can I support you today?",
+            "sources": []
+        }
+
     try:
-        cleaned_query = request.query.strip().lower()
-        greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening", "नमस्ते"]
+        response = qa_chain.invoke({"query": user_query})
+        answer = response.get("result", "").strip()
 
-        if any(greet in cleaned_query for greet in greetings):
-            return {
-                "response": "🌾 **Namaste!** I am **KrishiGPT**, your AI assistant for agriculture in Nepal.\n\nAsk me anything about crops, diseases, weather, tools, or farming advice.",
-                "sources": []
-            }
+        if "not available" in answer.lower():
+            fallback = llm.invoke(user_query)
+            answer += "\n\n🌱 Additional help: " + fallback
 
-        history_text = "\n".join(request.history)
-
-        # ✅ Use the correct input key expected by the PromptTemplate
-        response = qa_chain.invoke({
-            "question": request.query,        # <-- This MUST match PromptTemplate input
-            "history": history_text
-        })
+        # Append to simple history
+        chat_history.append({"user": user_query, "bot": answer})
 
         return {
-            "response": response["result"],
+            "response": answer,
+            "history": chat_history[-10:],  # limit last 10 exchanges
             "sources": [
                 {"source": doc.metadata.get("source", "unknown")} for doc in response["source_documents"]
             ]
@@ -128,6 +111,5 @@ async def query_krishi_gpt(request: QueryRequest):
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
 
-# --- Optional: CLI run ---
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
