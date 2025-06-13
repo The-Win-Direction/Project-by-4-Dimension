@@ -37,7 +37,7 @@ const Login = () => {
       localStorage.setItem('user', JSON.stringify(res.data.user));
 
       setSuccessMsg('✅ Login successful!');
-      navigate('/'); // Navigate to homepage
+      navigate('/'); 
     } catch (err) {
       const msg = err.response?.data?.message || '❌ Login failed. Please try again.';
       setErrorMsg(msg);

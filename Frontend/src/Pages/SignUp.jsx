@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
-import image from '../assets/login.png';
+import image from '../assets/signup.png';
 import { BACKEND_BASE_URL } from '../config';
 
 export default function Signup() {
