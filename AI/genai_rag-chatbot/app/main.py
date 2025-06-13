@@ -4,8 +4,9 @@ from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # --- CONFIG ---
 API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
@@ -13,29 +14,37 @@ DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
-# --- PROMPT TEMPLATE ---
+# --- CUSTOM PROMPT ---
 CUSTOM_PROMPT_TEMPLATE = """
-You are KrishiGPT, an agricultural assistant helping farmers by answering questions using accurate information from government PDFs, manuals, and policy documents.
+You are KrishiGPT, a friendly and knowledgeable agricultural assistant for farmers and officials in Nepal.
 
-Previous Conversation:
-{history}
+Respond in a warm, conversational, and helpful tone.
 
-Relevant Documents:
+Use only the provided context to answer specific agricultural or policy-related questions. If the answer is not found in the context, reply gently like:
+"The information isn't available in the documents I have, but I'm here to help in any other way!"
+
+Use *paragraph format* for general explanations and *bullet points* when listing steps or features.
+
+If user says things like “hi”, “hello”, “namaste”, or asks about you — give a friendly assistant-style reply.
+
+If the user asks for Nepali:
+- Translate the answer to Nepali if context is in English.
+- Respond in Nepali directly if context already is.
+
+Context:
 {context}
 
-Question: {question}
+User Question:
+{question}
 
-Answer in a simple, clear, and helpful manner tailored for farmers. If the answer is unclear from the documents, state that honestly and suggest consulting a local expert.
-
-Avoid chit-chat. Stick to facts based on the documents.
+Answer:
 """
 
 def set_custom_prompt(template):
-    return PromptTemplate(template=template, input_variables=["context", "question", "history"])
+    return PromptTemplate(template=template, input_variables=["context", "question"])
 
-# --- APP INIT ---
-app = FastAPI(title="KrishiGPT - RAG Chatbot")
-
+# --- INIT ---
+app = FastAPI(title="KrishiGPT: Conversational RAG Assistant")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -43,8 +52,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# --- Load Vectorstore and Embeddings ---
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
     google_api_key=API_KEY
@@ -55,45 +62,62 @@ try:
 except Exception as e:
     raise RuntimeError(f"Failed to load FAISS vectorstore: {e}")
 
-# --- Load LLM ---
 llm = ChatGoogleGenerativeAI(
     model=MODEL_NAME,
     google_api_key=API_KEY
 )
 
-# --- Build QA Chain with Custom Prompt ---
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=db.as_retriever(search_kwargs={'k': 3}),
+    retriever=db.as_retriever(search_kwargs={'k': 7}),
     return_source_documents=True,
-    chain_type_kwargs={
-        "prompt": set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)
-    }
+    chain_type_kwargs={'prompt': set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)}
 )
 
-# --- Request Schema ---
+# --- MODELS ---
+
 class QueryRequest(BaseModel):
     query: str
-    history: str = ""
 
-# --- Endpoint ---
+# --- CHAT HISTORY SUPPORT (In-memory for now) ---
+chat_history = []
+
+# --- ROUTES ---
+
 @app.post("/query")
 async def query_qa(request: QueryRequest):
-    try:
-        response = qa_chain.invoke({
-            "question": request.query,
-            "history": request.history
-        })
+    user_query = request.query.strip()
+
+    greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening", "what’s up", "who are you"]
+    if user_query.lower() in greetings or "your name" in user_query.lower():
         return {
-            "response": response["result"],
+            "response": "Namaste! 👋 I'm KrishiGPT – your helpful assistant for all things agriculture in Nepal. How can I support you today?",
+            "sources": []
+        }
+
+    try:
+        response = qa_chain.invoke({"query": user_query})
+        answer = response.get("result", "").strip()
+
+        if "not available" in answer.lower():
+            fallback = llm.invoke(user_query)
+            answer += "\n\n🌱 Additional help: " + fallback
+
+        # Append to simple history
+        chat_history.append({"user": user_query, "bot": answer})
+
+        return {
+            "response": answer,
+            "history": chat_history[-10:],  # limit last 10 exchanges
             "sources": [
                 {"source": doc.metadata.get("source", "unknown")} for doc in response["source_documents"]
             ]
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
-# --- Run ---
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

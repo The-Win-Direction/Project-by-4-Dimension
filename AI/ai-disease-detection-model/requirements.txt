@@ -1,0 +1,6 @@
+fastapi
+pillow
+tensorflow
+python-dotenv
+uvicorn
+numpy
