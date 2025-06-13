@@ -7,7 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 import uvicorn
 
 # --- CONFIG ---
-API_KEY = "YOUR_API_KEY_HERE"
+API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
 DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
