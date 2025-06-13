@@ -76,7 +76,7 @@ llm = ChatGoogleGenerativeAI(
 # --- BUILD RETRIEVAL QA CHAIN ---
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
-    chain_type="map_reduce",  # Better reasoning than 'stuff'
+    chain_type="map_reduce",
     retriever=db.as_retriever(search_kwargs={'k': 6}),
     return_source_documents=True,
     chain_type_kwargs={'prompt': set_custom_prompt(KRISHI_PROMPT)}
@@ -94,12 +94,22 @@ async def query_qa(request: QueryRequest):
         cleaned_query = request.query.strip().lower()
         greetings = ["hi", "hello", "hey", "namaste", "good morning", "good evening"]
 
+        # 💬 Handle greetings directly
         if cleaned_query in greetings:
             return {
                 "response": "🌾 Namaste! I am KrishiGPT, your agricultural assistant. Ask me anything about crops, farming methods, fertilizers, or climate-specific advice for Nepal.",
                 "sources": []
             }
 
+        # 🔍 Check if relevant documents exist
+        docs = db.similarity_search(cleaned_query, k=6)
+        if not docs or all(doc.page_content.strip() == "" for doc in docs):
+            return {
+                "response": "❌ The answer is not available in the context.",
+                "sources": []
+            }
+
+        # ✅ Proceed with full chain
         response = qa_chain.invoke({'query': request.query})
 
         return {
@@ -108,6 +118,7 @@ async def query_qa(request: QueryRequest):
                 {"source": doc.metadata.get("source", "unknown")} for doc in response["source_documents"]
             ]
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
