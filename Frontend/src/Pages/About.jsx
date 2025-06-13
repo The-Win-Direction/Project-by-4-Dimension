@@ -1,6 +1,7 @@
 import Header from '../Components/Header'
 import WhoWeAre from '../Components/About/WhoWeAre';
 import OurMission from '../Components/About/OurMission';
+import WhatWeDo from '../Components/About/WhatWeDo';
 
 function About() {
   return (
@@ -8,6 +9,7 @@ function About() {
       <Header/>
        <WhoWeAre/>
        <OurMission/>
+       <WhatWeDo/>
     </div>
   )
 }
