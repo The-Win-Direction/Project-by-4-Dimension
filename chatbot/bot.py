@@ -6,7 +6,6 @@ API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-f
 
 chat_history = []
 
-# Add a one-time domain-specific instruction for FarmFuse
 DOMAIN_PRIMER = (
     "You are a multilanguage supported AI assistant nick named as  specialized for a platform called FarmFuse. "
     "FarmFuse provides AI-driven agricultural support such as market prediction, province-wise insights, crop profitability guides, "
