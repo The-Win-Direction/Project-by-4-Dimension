@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+
 import Home from './Pages/Home';
 import Chatbot from './Pages/Chatbot';
 import AI from './Pages/AI';
@@ -9,19 +10,74 @@ import Login from './Pages/Login';
 import MarketPrice from './Pages/MarketPrice';
 import SignUp from './Pages/SignUp';
 import CropPrediction from './Pages/CropPrediction';
+
+import ProtectedRoute from './Components/ProtectedRoute';
+
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/chatbot" element={<Chatbot />} />
-        <Route path="/ai" element={<AI />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/knowledge" element={<Knowledge />} />
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/ai/price-prediction" element={<MarketPrice />} />
-        <Route path="/ai/crop-prediction" element={<CropPrediction />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chatbot"
+          element={
+            <ProtectedRoute>
+              <Chatbot />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai"
+          element={
+            <ProtectedRoute>
+              <AI />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute>
+              <About />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/knowledge"
+          element={
+            <ProtectedRoute>
+              <Knowledge />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai/price-prediction"
+          element={
+            <ProtectedRoute>
+              <MarketPrice />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai/crop-prediction"
+          element={
+            <ProtectedRoute>
+              <CropPrediction />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
