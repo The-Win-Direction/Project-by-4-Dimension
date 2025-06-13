@@ -10,43 +10,33 @@ function Chatbot() {
 
   const sendMessage = async () => {
     if (!query.trim()) return;
-
-    const userMessage = { sender: 'user', text: query };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    const userMsg = { sender: 'user', text: query };
+    const updated = [...messages, userMsg];
+    setMessages(updated);
     setLoading(true);
 
-    try {
-      const history = updatedMessages
-        .filter(m => m.sender !== 'system')
-        .map(m => `${m.sender === 'user' ? 'You' : 'KrishiGPT'}: ${m.text}`);
+    const history = updated.map(m => `${m.sender === 'user' ? 'You' : 'KrishiGPT'}: ${m.text}`);
 
+    try {
       const res = await axios.post('http://localhost:8000/query', {
         query,
         history
       });
 
-      const botMessage = {
+      const botMsg = {
         sender: 'bot',
-        text: res.data.response || '❌ Sorry, I could not find an answer.',
-        sources: res.data.sources || []
+        text: res.data.response,
+        sources: res.data.sources
       };
-
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (err) {
-      setMessages((prev) => [...prev, {
-        sender: 'bot',
-        text: '⚠️ Error contacting KrishiGPT server.'
-      }]);
+      setMessages([...updated, botMsg]);
+    } catch {
+      setMessages(prev => [...prev, { sender: 'bot', text: '⚠️ Error contacting server.' }]);
     }
-
     setQuery('');
     setLoading(false);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') sendMessage();
-  };
+  const handleKeyDown = e => e.key === 'Enter' && sendMessage();
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -61,54 +51,33 @@ function Chatbot() {
         <h2 className="text-2xl font-bold text-green-800 text-center mb-2">
           🌾 KrishiGPT – Your Farming AI Assistant
         </h2>
-        <p className="text-sm text-center text-gray-600 mb-4">
-          Ask anything about crops, weather, pests, government schemes, etc.
-        </p>
-
         <div
           ref={chatBoxRef}
           className="border border-green-200 bg-green-100 rounded-lg p-4 mb-4 max-h-[60vh] overflow-y-auto"
         >
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`mb-3 p-3 rounded-lg whitespace-pre-line ${
-                msg.sender === 'user'
-                  ? 'bg-green-200 text-right'
-                  : 'bg-white border border-green-300 text-left'
-              }`}
-            >
-              <strong>{msg.sender === 'user' ? 'You' : 'KrishiGPT'}:</strong> {msg.text}
-              {msg.sources && msg.sources.length > 0 && (
+          {messages.map((m, i) => (
+            <div key={i} className={`mb-3 p-3 rounded ${m.sender === 'user' ? 'bg-green-200 text-right' : 'bg-white border'} whitespace-pre-line`}>
+              <strong>{m.sender === 'user' ? 'You' : 'KrishiGPT'}:</strong> {m.text}
+              {m.sources?.length > 0 && (
                 <div className="text-xs text-gray-500 mt-2">
                   🔗 <strong>Sources:</strong>{' '}
-                  {msg.sources.map((s, i) => (
-                    <span key={i} className="mr-2 underline decoration-dotted">
-                      [{s.source}]
-                    </span>
-                  ))}
+                  {m.sources.map((s, idx) => <span key={idx} className="mr-2 underline decoration-dotted">[{s.source}]</span>)}
                 </div>
               )}
             </div>
           ))}
           {loading && <p className="text-sm text-gray-500">⌛ Generating response...</p>}
         </div>
-
         <div className="flex gap-2 mt-4">
           <input
-            type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about agriculture, crop care, fertilizer tips..."
-            className="flex-1 px-4 py-2 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            placeholder="Ask about crops, pests, or fertilizer..."
+            className="flex-1 px-4 py-2 border rounded focus:ring"
           />
-          <button
-            onClick={sendMessage}
-            className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
-            disabled={loading}
-          >
-            {loading ? 'Sending...' : 'Send'}
+          <button onClick={sendMessage} disabled={loading} className="px-5 py-2 bg-green-600 text-white rounded-lg">
+            {loading ? '...' : 'Send'}
           </button>
         </div>
       </div>
