@@ -10,6 +10,7 @@ import Login from './Pages/Login';
 import MarketPrice from './Pages/MarketPrice';
 import SignUp from './Pages/SignUp';
 import CropPrediction from './Pages/CropPrediction';
+import ShareYourStory from './Pages/ShareYourStory';
 
 import ProtectedRoute from './Components/ProtectedRoute';
 
@@ -68,6 +69,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CropPrediction />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/share-story"
+          element={
+            <ProtectedRoute>
+              <ShareYourStory />
             </ProtectedRoute>
           }
         />
