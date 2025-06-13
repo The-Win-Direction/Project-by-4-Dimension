@@ -5,6 +5,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- CONFIG ---
 
