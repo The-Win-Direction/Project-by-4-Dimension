@@ -4,7 +4,6 @@ from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # --- CONFIG ---
@@ -13,39 +12,41 @@ DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
 
-# --- CUSTOM PROMPT TEMPLATE ---
-CUSTOM_PROMPT_TEMPLATE = """
-You are KrishiGPT, an expert agricultural assistant. You answer farmers' questions using verified government resources, schemes, and manuals.
+# --- CUSTOM PROMPT TEMPLATE FOR KRISHIGPT ASSISTANT ---
+KRISHI_PROMPT = """
+You are *KrishiGPT*, an expert AI assistant trained to support farmers, agriculture officers, and students in Nepal.
 
-{history}
+🧠 Respond with **accurate, context-based knowledge** ONLY from the documents provided.
+🌾 Focus your answers on practical use for Nepal's climate, soil, and seasonal farming needs.
 
-Use the following context to answer the user's latest question:
+Rules:
+- If context doesn't contain the answer, say: **"The answer is not available in the context."**
+- Use bullet points only for lists (steps, features, problems).
+- Use paragraph format for explanations, definitions, or advice.
+- Prefer agricultural terms used in Nepal.
 
-Context:
+🗣️ **If user requests Nepali** (e.g., “in Nepali”, “Nepali ma bhan”, etc):
+  → If context is in English, **translate your answer** to Nepali.
+  → If context is already in Nepali, reply in Nepali directly.
+
+Otherwise, reply in clear English.
+
+📄 Context:
 {context}
 
-Question:
+❓User Question:
 {question}
 
-Answer with only relevant factual information. If not sure, say you don’t know. Do not guess.
+✅ Answer:
 """
 
-# ✅ FIXED: Removed 'context' from input_variables
 def set_custom_prompt(template):
-    return PromptTemplate(template=template, input_variables=["question", "history"])
+    return PromptTemplate(template=template, input_variables=["context", "question"])
 
-# --- FASTAPI INITIALIZATION ---
-app = FastAPI(title="KrishiGPT: RAG-powered Agriculture QA")
+# --- FASTAPI APP ---
+app = FastAPI(title="KrishiGPT Assistant Bot API", version="2.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# --- LOAD EMBEDDINGS AND VECTORSTORE ---
+# --- EMBEDDING + DB LOAD ---
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
     google_api_key=API_KEY
@@ -66,26 +67,20 @@ llm = ChatGoogleGenerativeAI(
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=db.as_retriever(search_kwargs={'k': 3}),
+    retriever=db.as_retriever(search_kwargs={'k': 6}),
     return_source_documents=True,
-    chain_type_kwargs={'prompt': set_custom_prompt(CUSTOM_PROMPT_TEMPLATE)}
+    chain_type_kwargs={'prompt': set_custom_prompt(KRISHI_PROMPT)}
 )
 
 # --- REQUEST MODEL ---
 class QueryRequest(BaseModel):
     query: str
-    history: str = ""
 
-# --- ROUTE ---
-@app.post("/query")
+# --- API ENDPOINT ---
+@app.post("/query", summary="Ask KrishiGPT about agriculture in Nepal")
 async def query_qa(request: QueryRequest):
     try:
-        # ✅ FIXED: Use 'question' instead of 'query' in chain input
-        inputs = {
-            "question": request.query,
-            "history": request.history
-        }
-        response = qa_chain.invoke(inputs)
+        response = qa_chain.invoke({'query': request.query})
         return {
             "response": response["result"],
             "sources": [
@@ -95,6 +90,6 @@ async def query_qa(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Query failed: {str(e)}")
 
-# --- MAIN ---
+# --- MAIN ENTRY ---
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
