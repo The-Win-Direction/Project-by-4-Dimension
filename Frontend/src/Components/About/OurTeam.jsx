@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaLinkedin, FaFacebook, FaGithub } from 'react-icons/fa';
-import Dipaimg from '../../assets/dipaPic.JPG';
+import Dipaimg from '../../assets/dipaPic.jpg';
 import Dipakimg from '../../assets/dipakPic.jpg';
 import Dilendraimg from '../../assets/dilendraPic.jpg';
 import Sammyimg from '../../assets/sammyPic.jpg';
