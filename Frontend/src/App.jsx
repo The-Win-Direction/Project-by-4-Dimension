@@ -12,6 +12,7 @@ import CropPrediction from './Pages/CropPrediction';
 import ShareYourStory from './Pages/ShareYourStory';
 import ProtectedRoute from './Components/ProtectedRoute';
 import SuccessStories from './Pages/SuccessStories';
+import DiseaseDetection from './Pages/DiseaseDetection';
 
 function App() {
   return (
@@ -76,6 +77,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ShareYourStory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/disease-detection"
+          element={
+            <ProtectedRoute>
+              <DiseaseDetection />
             </ProtectedRoute>
           }
         />
