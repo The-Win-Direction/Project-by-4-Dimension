@@ -5,7 +5,7 @@ import image from '../../assets/Homeimage.jpg';
 const HeroSection = () => {
   return (
     <section className="bg-green-50 py-20 px-4">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-10">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-24">
         
         {/* Text Content */}
         <div className="text-center md:text-left">
@@ -26,8 +26,8 @@ const HeroSection = () => {
         </div>
 
         {/* Image */}
-        <div className="flex justify-center md:justify-end">
-          <img src={image} alt="Farmfuse AI Illustration" className="  rounded-xl shadow-lg" />
+        <div className="flex  md:justify-end">
+          <img src={image} alt="Farmfuse AI Illustration" className="h-[20rem]  rounded-xl shadow-lg" />
         </div>
       </div>
     </section>
