@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../Components/Header';
 
@@ -6,6 +6,7 @@ function Chatbot() {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const chatBoxRef = useRef(null);
 
   const sendMessage = async () => {
     if (!query.trim()) return;
@@ -16,8 +17,12 @@ function Chatbot() {
     setLoading(true);
 
     try {
+      // Build chat history text array
+      const history = updatedMessages.map((msg) => `${msg.sender === 'user' ? 'You' : 'KrishiGPT'}: ${msg.text}`);
+
       const res = await axios.post('https://genai-rag-chatbot-4-dimension.onrender.com/query', {
-        query
+        query,
+        history
       });
 
       const botMessage = {
@@ -25,9 +30,13 @@ function Chatbot() {
         text: res.data.response || '❌ Sorry, I could not find an answer.',
         sources: res.data.sources || []
       };
+
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
-      setMessages((prev) => [...prev, { sender: 'bot', text: '⚠️ Error contacting KrishiGPT server.' }]);
+      setMessages((prev) => [...prev, {
+        sender: 'bot',
+        text: '⚠️ Error contacting KrishiGPT server.'
+      }]);
     }
 
     setQuery('');
@@ -38,6 +47,13 @@ function Chatbot() {
     if (e.key === 'Enter') sendMessage();
   };
 
+  // Scroll to bottom on new message
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
     <div className="min-h-screen bg-green-50 font-sans">
       <Header />
@@ -46,10 +62,13 @@ function Chatbot() {
           🌾 KrishiGPT – Your Farming AI Assistant
         </h2>
         <p className="text-sm text-center text-gray-600 mb-4">
-          Ask anything about crops, weather, government schemes, pests, or fertilizer use.
+          Ask anything about crops, weather, pests, government schemes, etc.
         </p>
 
-        <div className="border border-green-200 bg-green-100 rounded-lg p-4 mb-4 max-h-[60vh] overflow-y-auto">
+        <div
+          ref={chatBoxRef}
+          className="border border-green-200 bg-green-100 rounded-lg p-4 mb-4 max-h-[60vh] overflow-y-auto"
+        >
           {messages.map((msg, idx) => (
             <div
               key={idx}

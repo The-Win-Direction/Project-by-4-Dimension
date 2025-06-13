@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain.chains import RetrievalQA
 from langchain_core.prompts import PromptTemplate
@@ -46,6 +47,15 @@ def set_custom_prompt(template):
 # --- FASTAPI APP ---
 app = FastAPI(title="KrishiGPT Assistant Bot API", version="2.0")
 
+# --- ENABLE CORS ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with specific frontend URL in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # --- EMBEDDING + DB LOAD ---
 embedding_model = GoogleGenerativeAIEmbeddings(
     model=EMBEDDING_MODEL_NAME,
@@ -75,12 +85,16 @@ qa_chain = RetrievalQA.from_chain_type(
 # --- REQUEST MODEL ---
 class QueryRequest(BaseModel):
     query: str
+    history: list[str] = []
 
 # --- API ENDPOINT ---
 @app.post("/query", summary="Ask KrishiGPT about agriculture in Nepal")
 async def query_qa(request: QueryRequest):
     try:
-        response = qa_chain.invoke({'query': request.query})
+        # Optional: combine history into a full conversation prompt
+        full_prompt = "\n".join(request.history + [f"You: {request.query}"])
+        response = qa_chain.invoke({'query': full_prompt})
+
         return {
             "response": response["result"],
             "sources": [
