@@ -62,7 +62,7 @@ export default function Signup() {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-400"
-                placeholder="John Doe"
+                placeholder="Dipa Joshi"
               />
             </div>
 

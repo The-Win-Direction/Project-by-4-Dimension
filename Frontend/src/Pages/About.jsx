@@ -1,12 +1,19 @@
-import React from 'react'
 import Header from '../Components/Header'
+import WhoWeAre from '../Components/About/WhoWeAre';
+import OurMission from '../Components/About/OurMission';
+import WhatWeDo from '../Components/About/WhatWeDo';
+import OurTeam from '../Components/About/OurTeam';
+import Footer from '../Components/Footer';
 
 function About() {
   return (
     <div>
       <Header/>
-      About Us
-      <h2 className='text-5xl'>about us and about our project</h2>
+       <WhoWeAre/>
+       <OurMission/>
+       <WhatWeDo/>
+       <OurTeam/>
+       <Footer/>
     </div>
   )
 }

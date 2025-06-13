@@ -110,7 +110,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Image Section */}
+      {/* Image Section */} 
       <div className="hidden md:flex w-full md:w-1/2 bg-green-100 items-center justify-center">
         <img src={image} alt="Login Illustration" className="w-4/5" />
       </div>
