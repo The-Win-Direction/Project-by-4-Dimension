@@ -26,7 +26,7 @@ const aiTools = [
     title: '💬 AI Chatbot Assistant',
     description:
       'Have questions about your crops or facing farm issues? Chat with our AI assistant anytime for instant support, tips, and troubleshooting.',
-    route: '/ai/chatbot',
+    route: '/chatbot',
   },
 ];
 
@@ -37,14 +37,7 @@ function AI() {
     <div className="min-h-screen bg-green-50">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-green-700 mb-4">
-             Smart Farming Starts Here
-          </h1>
-          <p className="text-gray-700 text-lg sm:text-xl max-w-3xl mx-auto">
-            Unlock the power of AI to make data-driven decisions on your farm. From crop selection to pricing strategy, plant care to instant advice — we’ve got you covered.
-          </p>
-        </div> */}
+
 
         <h2 className="text-2xl font-semibold text-green-600 mb-8 text-center">
           🌿 Explore Our AI Tools
