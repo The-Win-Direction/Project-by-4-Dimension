@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -51,6 +52,17 @@ app = FastAPI(
     title="Soil Report OCR Extractor",
     description="Extracts N, P, K, temperature, humidity, pH, and rainfall from soil report image."
 )
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # --- ROUTE ---
 
