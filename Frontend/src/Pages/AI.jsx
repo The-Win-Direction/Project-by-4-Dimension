@@ -35,7 +35,7 @@ const aiTools = [
     title: '💬 AI Chatbot Assistant',
     description:
       'Have farming questions? Talk to our smart chatbot for guidance on crops, pests, fertilizers, government schemes, and more.',
-    route: '/chatbot',
+    route: 'pest-ai',
     bg: 'from-purple-100 to-indigo-50',
     icon: '🤖',
     action: 'Chat with Assistant',
