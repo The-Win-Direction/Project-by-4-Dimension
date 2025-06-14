@@ -6,6 +6,7 @@ const AddCustomLog = ({ khetId }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    date: '',
   });
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const AddCustomLog = ({ khetId }) => {
         },
       });
       setSuccess(true);
-      setFormData({ title: '', description: '' });
+      setFormData({ title: '', description: '', date: '' });
       setPhoto(null);
     } catch (err) {
       console.error(err);
@@ -77,6 +78,18 @@ const AddCustomLog = ({ khetId }) => {
             required
             className="border p-2 rounded w-full"
           ></textarea>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="border p-2 rounded w-full"
+          />
         </div>
 
         <div>

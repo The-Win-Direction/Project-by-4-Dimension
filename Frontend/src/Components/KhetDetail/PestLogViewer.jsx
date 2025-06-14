@@ -49,29 +49,35 @@ const PestLogViewer = () => {
           {logs.map((log) => (
             <div
               key={log._id}
-              className="bg-gradient-to-br from-green-100 via-green-200 to-green-300 border border-green-200 shadow-sm rounded-xl overflow-hidden transform hover:scale-[1.02] hover:shadow-green-300 transition-all duration-300"
+              className="bg-gradient-to-br from-green-50 via-green-100 to-green-200 border border-green-200 rounded-xl shadow-sm overflow-hidden hover:shadow-green-300 transform hover:scale-[1.02] transition-all duration-300"
             >
-              {log.imageUrl && (
+              {log.photo && (
                 <div className="overflow-hidden">
                   <img
-                    src={log.imageUrl}
+                    src={log.photo}
                     alt="Pest log"
-                    className="w-full h-24 object-cover hover:scale-110 transition-transform duration-500"
+                    className="w-full h-32 object-cover hover:scale-110 transition-transform duration-500"
                   />
                 </div>
               )}
               <div className="p-4 space-y-1.5">
-                <p className="text-base font-semibold text-green-800">
-                  🐞 Pest: <span className="text-gray-800">{log.pestObserved || 'N/A'}</span>
+                <p className="text-base font-semibold text-green-900">
+                  🐞 Problem: <span className="text-gray-800">{log.problem}</span>
                 </p>
-                <p className="text-xs text-gray-800">
-                  ⚠️ Severity: <span className="text-gray-700">{log.severity || 'N/A'}</span>
+                <p className="text-sm text-gray-800">
+                  🗓️ Observed On:{" "}
+                  <span className="text-gray-700">
+                    {new Date(log.dateObserved).toLocaleDateString()}
+                  </span>
                 </p>
-                <p className="text-xs text-gray-800">
+                <p className="text-sm text-gray-800">
                   🛠️ Action Taken: <span className="text-gray-700">{log.actionTaken || 'N/A'}</span>
                 </p>
+                <p className="text-sm text-gray-800">
+                  ✅ Result: <span className="text-gray-700">{log.result || 'N/A'}</span>
+                </p>
                 <p className="text-[10px] text-gray-500 italic pt-2">
-                  📅 Date: {new Date(log.createdAt).toLocaleDateString()}
+                  Submitted: {new Date(log.createdAt).toLocaleString()}
                 </p>
               </div>
             </div>

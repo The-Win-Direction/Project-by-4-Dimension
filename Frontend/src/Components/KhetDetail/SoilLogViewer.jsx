@@ -53,10 +53,10 @@ const SoilLogViewer = () => {
               key={log._id}
               className="bg-gradient-to-br from-green-100 via-green-200 to-green-300 border border-green-200 shadow-sm rounded-xl overflow-hidden transform hover:scale-[1.02] hover:shadow-green-300 transition-all duration-300"
             >
-              {log.imageUrl && (
+              {log.photo && (
                 <div className="overflow-hidden">
                   <img
-                    src={log.imageUrl}
+                    src={log.photo}
                     alt="Soil log"
                     className="w-full h-24 object-cover hover:scale-110 transition-transform duration-500"
                   />
@@ -64,19 +64,19 @@ const SoilLogViewer = () => {
               )}
               <div className="p-4 space-y-1.5">
                 <p className="text-base font-semibold text-green-800">
-                  🧪 Soil Test: <span className="text-gray-800">{log.soilTestReport}</span>
+                  🧪 Test Report: <span className="text-gray-800">{log.soilTestReport || 'N/A'}</span>
                 </p>
-                <p className="text-xs text-gray-800">
-                  💊 Fertilizer: <span className="text-gray-700">{log.fertilizerUsed || 'N/A'}</span>
+                <p className="text-sm text-gray-800">
+                  💊 Fertilizer Used: <span className="text-gray-700">{log.fertilizerUsed || 'N/A'}</span>
                 </p>
-                <p className="text-xs text-gray-800">
-                  🌿 Compost: <span className="text-gray-700">{log.compostUsed || 'N/A'}</span>
+                <p className="text-sm text-gray-800">
+                  🌿 Compost Used: <span className="text-gray-700">{log.compostUsed || 'N/A'}</span>
                 </p>
-                <p className="text-xs text-gray-800">
-                  ♻️ Organic: <span className="text-gray-700">{log.organicPractices || 'N/A'}</span>
+                <p className="text-sm text-gray-800">
+                  ♻️ Organic Practices: <span className="text-gray-700">{log.organicPractices || 'N/A'}</span>
                 </p>
                 <p className="text-[10px] text-gray-500 italic pt-2">
-                  📅 Date: {new Date(log.createdAt).toLocaleDateString()}
+                  📅 Submitted: {new Date(log.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>

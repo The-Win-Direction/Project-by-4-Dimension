@@ -51,10 +51,10 @@ const IrrigationLogViewer = () => {
               key={log._id}
               className="bg-gradient-to-br from-green-100 via-green-200 to-green-300 border border-green-200 shadow-sm rounded-xl overflow-hidden transform hover:scale-[1.02] hover:shadow-green-300 transition-all duration-300"
             >
-              {log.imageUrl && (
+              {log.photo && (
                 <div className="overflow-hidden">
                   <img
-                    src={log.imageUrl}
+                    src={log.photo}
                     alt="Irrigation log"
                     className="w-full h-24 object-cover hover:scale-110 transition-transform duration-500"
                   />
@@ -64,14 +64,14 @@ const IrrigationLogViewer = () => {
                 <p className="text-base font-semibold text-green-800">
                   🚰 Water Source: <span className="text-gray-800">{log.waterSource || 'N/A'}</span>
                 </p>
-                <p className="text-xs text-gray-800">
+                <p className="text-sm text-gray-800">
                   💦 Quantity: <span className="text-gray-700">{log.quantity || 'N/A'}</span>
                 </p>
-                <p className="text-xs text-gray-800">
+                <p className="text-sm text-gray-800">
                   ⚠️ Issues: <span className="text-gray-700">{log.issues || 'None'}</span>
                 </p>
                 <p className="text-[10px] text-gray-500 italic pt-2">
-                  📅 Date: {new Date(log.createdAt).toLocaleDateString()}
+                  📅 Date: {new Date(log.date || log.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -79,6 +79,7 @@ const IrrigationLogViewer = () => {
         </div>
       )}
 
+      {/* Pagination */}
       {pages > 1 && (
         <div className="flex justify-center mt-10 flex-wrap gap-2">
           {Array.from({ length: pages }, (_, i) => (
