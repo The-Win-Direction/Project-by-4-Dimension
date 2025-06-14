@@ -1,20 +1,22 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image
-import pytesseract
 import numpy as np
 import io
-import cv2
+import base64
+import requests
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 # --- CONFIGURATION ---
 
-API_KEY = "YOUR_GOOGLE_API_KEY"  # Replace with your real key
-MODEL_NAME = "gemini-1.5-flash"
+GEMINI_API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
+GEMINI_MODEL_NAME = "gemini-1.5-flash"
+
+VISION_API_KEY = "AIzaSyBOOzipromkY_yua0tmpQmwc9xCeuGuANI"
+VISION_API_URL = f"https://vision.googleapis.com/v1/images:annotate?key={VISION_API_KEY}"
 
 DEFAULT_VALUES = {
     "N": 50.55,
@@ -28,8 +30,8 @@ DEFAULT_VALUES = {
 
 # LangChain + Gemini setup
 llm = ChatGoogleGenerativeAI(
-    model=MODEL_NAME,
-    google_api_key=API_KEY,
+    model=GEMINI_MODEL_NAME,
+    google_api_key=GEMINI_API_KEY,
     temperature=0.5
 )
 
@@ -52,29 +54,34 @@ app = FastAPI(
     description="Extracts N, P, K, temperature, humidity, pH, and rainfall from soil report image."
 )
 
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
-# --- ROUTE ---
 @app.post("/soil-ocr/")
 async def analyze_soil_image(file: UploadFile = File(...)):
     try:
-        # Step 1: Read and convert image
+        # Step 1: Read and convert image to base64
         image_bytes = await file.read()
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        image_np = np.array(image)
-        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
 
-        # Step 2: OCR extraction using pytesseract
-        extracted_text = pytesseract.image_to_string(gray)
+        # Step 2: Call Google Vision OCR
+        vision_payload = {
+            "requests": [
+                {
+                    "image": {"content": image_base64},
+                    "features": [{"type": "TEXT_DETECTION"}]
+                }
+            ]
+        }
 
-        # Step 3: LLM prompt
+        vision_response = requests.post(VISION_API_URL, json=vision_payload)
+        vision_result = vision_response.json()
+
+        if "error" in vision_result.get("responses", [{}])[0]:
+            raise Exception(vision_result["responses"][0]["error"]["message"])
+
+        text_annotations = vision_result["responses"][0].get("textAnnotations", [])
+        extracted_text = text_annotations[0]["description"] if text_annotations else ""
+
+        # Step 3: Prompt Gemini with the extracted text
         prompt = f"""
 You are a soil report analyzer.
 
@@ -96,7 +103,7 @@ Soil Report Text:
 {extracted_text}
         """
 
-        # Step 4: Invoke Gemini
+        # Step 4: Get Gemini response
         gemini_response = llm.invoke(prompt)
         structured_data = output_parser.parse(gemini_response.content)
 
@@ -124,6 +131,8 @@ Soil Report Text:
             content={"status": "error", "message": str(e)}
         )
 
+
+# Optional for local testing (skip on Render)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
