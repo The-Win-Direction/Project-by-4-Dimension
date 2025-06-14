@@ -16,6 +16,22 @@ exports.getUserKhets = async (req, res) => {
   }
 };
 
+// Get a specific khet by ID for the logged-in user
+exports.getKhetById = async (req, res) => {
+  try {
+    const khet = await Khet.findOne({ _id: req.params.khetId, user: req.user._id });
+
+    if (!khet) {
+      return res.status(404).json({ message: 'Khet not found or unauthorized' });
+    }
+
+    res.json(khet);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 // Generic function to fetch logs with pagination
 const getLogs = (Model) => async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
