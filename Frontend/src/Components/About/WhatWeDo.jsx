@@ -1,64 +1,73 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, LineChart, BookOpenText, CloudSun, Cpu } from 'lucide-react';
+import {
+  Bot, BrainCircuit, Camera, LineChart, BookText, ActivitySquare
+} from 'lucide-react';
 
 function WhatWeDo() {
   const features = [
+   {
+  icon: <Bot className="w-6 h-6 text-white" />,
+  title: 'KrishiGPT Chatbot',
+  desc: 'Ask anything about agriculture — powered by RAG and government PDFs for accurate answers.',
+},
     {
-      icon: <Bot className="w-6 h-6 text-green-700" />,
-      title: 'AI Chatbot',
-      desc: '24/7 KrishiGPT for instant answers.',
+      icon: <LineChart className="w-6 h-6 text-white" />,
+      title: 'Crop Price Forecast',
+      desc: 'Find the most profitable months to sell your crops with ML prediction.',
     },
     {
-      icon: <LineChart className="w-6 h-6 text-green-700" />,
-      title: 'Price Prediction',
-      desc: 'Know when to sell for max profit.',
+      icon: <Camera className="w-6 h-6 text-white" />,
+      title: 'Soil Scanner (OCR)',
+      desc: 'Upload lab reports to auto-fill nutrients & get crop suggestions.',
     },
     {
-      icon: <BookOpenText className="w-6 h-6 text-green-700" />,
-      title: 'Knowledge Base',
-      desc: 'Easy guides on crops & techniques.',
+      icon: <ActivitySquare className="w-6 h-6 text-white" />,
+      title: 'Pest Predictor',
+      desc: 'Detect the most likely pest using real weather data and AI models.',
     },
     {
-      icon: <CloudSun className="w-6 h-6 text-green-700" />,
-      title: 'Smart Suggestions',
-      desc: 'Weather-based crop care (beta).',
+      icon: <BookText className="w-6 h-6 text-white" />,
+      title: 'Khet Tracker',
+      desc: 'Track field data, logs, and expenses with image support.',
     },
     {
-      icon: <Cpu className="w-6 h-6 text-green-700" />,
-      title: 'Data Insights',
-      desc: 'Agri dashboards for smarter planning.',
+      icon: <BrainCircuit className="w-6 h-6 text-white" />,
+      title: 'AI Log Analyzer',
+      desc: 'Get smart insights from your field logs — per category or full summary.',
     },
   ];
 
   return (
-    <section className="bg-white py-12 px-4 md:px-16 lg:px-32">
+    <section className="bg-green-50 py-16 px-6 md:px-16 lg:px-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="text-center max-w-3xl mx-auto mb-10"
+        className="text-center max-w-4xl mx-auto mb-14"
       >
-        <h2 className="text-3xl font-bold text-green-800">What We Do</h2>
-        <p className="text-gray-600 mt-3 text-base">
-          We simplify farming with technology — focused, fast, and farmer-first.
+        <h2 className="text-4xl font-bold text-green-800">What We Do</h2>
+        <p className="text-gray-600 mt-3 text-lg">
+          Empowering Nepali farmers with AI-powered tools for smarter, easier agriculture. 🇳🇵🌱
         </p>
       </motion.div>
 
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-5  mx-auto">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: idx * 0.08, duration: 0.4 }}
-            className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm flex flex-col gap-2 items-start hover:shadow-md transition"
+            transition={{ delay: idx * 0.1, duration: 0.5 }}
+            className="bg-white rounded-2xl shadow-md border border-green-100 p-6 hover:shadow-xl transition-all duration-300"
           >
-            {feature.icon}
-            <h3 className="text-md font-semibold text-green-700">{feature.title}</h3>
-            <p className="text-gray-600">{feature.desc}</p>
+            <div className="bg-green-600 rounded-full p-3 mb-4 inline-flex">
+              {feature.icon}
+            </div>
+            <h3 className="text-xl font-semibold text-green-700 mb-2">{feature.title}</h3>
+            <p className="text-gray-600 text-sm">{feature.desc}</p>
           </motion.div>
         ))}
       </div>

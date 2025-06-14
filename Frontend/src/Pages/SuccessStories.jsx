@@ -6,6 +6,7 @@ import sunita from '../assets/sunita.jpg'
 import manita from '../assets/manita.jpg'
 import ramesh from '../assets/ramesh.jpg'
 import hari from '../assets/hari.jpg'
+import Footer from '../Components/Footer'
 
 const stories = [
   {
@@ -118,13 +119,15 @@ export default function SuccessStories() {
           <Link to="/share-story">
             <motion.button
               whileHover={{ scale: 1.05 }}
-              className="mt-6 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold"
+              className="mt-6 mb-6 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full font-semibold"
             >
               Share Your Story
             </motion.button>
           </Link>
+
         </div>
       </section>
+      <Footer/>
     </div>
   );
 }
