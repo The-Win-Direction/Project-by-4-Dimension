@@ -22,33 +22,30 @@ function ChatPage() {
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
-    const chatHistory = messages
+    const history = messages
       .filter((msg) => msg.sender === 'user')
-      .map((msg) => msg.text)
-      .join('\n');
-
-    const fullQuery = chatHistory ? `${chatHistory}\n${query}` : query;
+      .map((msg) => msg.text);
 
     try {
-      const res = await axios.post(API_URL, { query: fullQuery });
+      const res = await axios.post(API_URL, {
+        question: query,
+        history
+      });
 
       const botMessage = {
         sender: 'bot',
         text: res.data.response,
-        sources: res.data.sources || [],
+        sources: res.data.sources || []
       };
 
       setMessages((prev) => [...prev, botMessage]);
       setQuery('');
     } catch (error) {
-      console.error('Error contacting the assistant:', error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: 'bot',
-          text: '❌ Something went wrong while contacting the assistant.',
-        },
-      ]);
+      console.error('Error:', error);
+      setMessages((prev) => [...prev, {
+        sender: 'bot',
+        text: '❌ Something went wrong while contacting the assistant.'
+      }]);
     } finally {
       setLoading(false);
     }
@@ -64,42 +61,22 @@ function ChatPage() {
   return (
     <div className='bg-green-50 h-[100vh]'>
       <Header />
-      <div className="bg-green-50  flex items-center justify-center px-4 ">
-        <div className="w-full max-w-6xl bg-white  shadow-2xl p-8">
+      <div className="bg-green-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-6xl bg-white shadow-2xl p-8">
           <h1 className="text-3xl font-semibold text-green-700 mb-6 text-center">
             🌿 KrishiGPT - Your Smart Agricultural Assistant
           </h1>
 
-          {/* Chat Display */}
           <div className="h-[400px] overflow-y-auto px-4 py-4 rounded-2xl bg-green-100 border border-green-200 space-y-4">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex items-end gap-3 ${
-                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
+              <div key={index} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.sender === 'bot' && (
                   <div className="p-2 bg-green-200 rounded-full">
                     <Bot className="h-5 w-5 text-green-800" />
                   </div>
                 )}
-                <div
-                  className={`p-4 max-w-[70%] rounded-2xl shadow-md whitespace-pre-line ${
-                    msg.sender === 'user'
-                      ? 'bg-green-600 text-white rounded-br-none'
-                      : 'bg-white text-gray-900 rounded-bl-none'
-                  }`}
-                >
+                <div className={`p-4 max-w-[70%] rounded-2xl shadow-md whitespace-pre-line ${msg.sender === 'user' ? 'bg-green-600 text-white rounded-br-none' : 'bg-white text-gray-900 rounded-bl-none'}`}>
                   <p className="text-md leading-relaxed">{msg.text}</p>
-                  {/* {msg.sources && msg.sources.length > 0 && (
-                    <ul className="mt-2 text-xs text-gray-500 space-y-1">
-                      <li><strong>Sources:</strong></li>
-                      {msg.sources.map((src, i) => (
-                        <li key={i}>🔗 {src.source}</li>
-                      ))}
-                    </ul>
-                  )} */}
                 </div>
                 {msg.sender === 'user' && (
                   <div className="p-2 bg-green-600 rounded-full">
@@ -122,7 +99,6 @@ function ChatPage() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Input Area */}
           <div className="mt-6 flex">
             <textarea
               className="w-full border border-green-300 rounded-l-2xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
