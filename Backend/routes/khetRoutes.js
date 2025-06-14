@@ -19,7 +19,7 @@ router.post('/:khetId/custom-log', auth, upload.single('photo'), khetController.
 
 // Get all khets of a user
 router.get('/', auth, history.getUserKhets);
-router.get('/:khetId', authMiddleware, khetController.getKhetById); 
+router.get('/:khetId', auth, history.getKhetById); 
 // Logs (with pagination)
 router.get('/:khetId/crop-logs', auth, history.getCropLogs);
 router.get('/:khetId/soil-logs', auth, history.getSoilLogs);
