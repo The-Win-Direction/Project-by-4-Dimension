@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { BACKEND_BASE_URL } from '../../config';
+import ReactMarkdown from 'react-markdown';
+
 
 const LOG_OPTIONS = [
   { label: '🌾 Crop Logs', value: 'crop' },
@@ -179,14 +181,15 @@ const AnalyzeLogs = ({ khetId }) => {
     )}
 
     {/* Analysis Output */}
-    {analysis && (
-      <div className="mt-6 bg-white border border-green-300 rounded-xl p-4 shadow-md">
-        <h3 className="text-xl font-bold text-green-800 mb-2 text-center">📊 AI Insights</h3>
-        <pre className="whitespace-pre-wrap text-gray-800 text-sm max-h-[250px] overflow-y-auto p-3 bg-gray-50 rounded border">
-          {analysis}
-        </pre>
-      </div>
-    )}
+{analysis && (
+  <div className="mt-6 bg-white border border-green-300 rounded-xl p-4 shadow-md">
+    <h3 className="text-xl font-bold text-green-800 mb-2 text-center">📊 AI Insights</h3>
+    <div className="prose prose-sm max-w-none text-gray-800 bg-gray-50 p-4 rounded border overflow-y-auto max-h-[250px]">
+      <ReactMarkdown>{analysis}</ReactMarkdown>
+    </div>
+  </div>
+)}
+
   </div>
 </div>
 

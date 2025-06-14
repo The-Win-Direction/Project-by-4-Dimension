@@ -141,10 +141,10 @@ function CropPrediction() {
           )}
 
           {autoFilledFields.length > 0 && (
-            <p className="text-center text-sm text-gray-600 italic mb-5">
-              ✅ Autofilled fields: {autoFilledFields.join(', ')}
-            </p>
-          )}
+          <p className="text-center text-sm text-gray-500 italic mb-4">
+            ✅ Autofilled values (corrected if out of range): {autoFilledFields.join(', ')}
+          </p>
+        )}
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {Object.keys(fieldLabels).map((field) => (

@@ -7,13 +7,13 @@ import Sammyimg from '../../assets/sammyPic.jpg';
 
 const teamMembers = [
       {
-    name: 'Sameer Bhatta',
+    name: 'Sameer Bhatt',
     role: 'UI/UX Designer & System Analyst',
     desc: 'Blends system architecture with thoughtful design for smooth product performance.',
     image: Sammyimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/sameerbhatta',
-      facebook: 'https://facebook.com/sameerbhatta',
+      linkedin: 'https://www.linkedin.com/in/dipak-raj-giri-970069234/',
+      facebook: 'https://www.facebook.com/lokesh.bhatt.4447',
       github: 'https://github.com/sameerbhatta',
     },
   },
@@ -23,8 +23,8 @@ const teamMembers = [
     desc: 'Designs clean, user-centric interfaces and crafts responsive frontend architecture.',
     image: Dipaimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dipa-joshiiiiiii',
-      facebook: 'https://facebook.com/dipajoshiiiiiiii',
+      linkedin: 'https://www.linkedin.com/in/dipa-joshi-548a79233/',
+      facebook: 'https://www.facebook.com/dipa.joshi.276378/',
       github: 'https://github.com/dipajoshi',
     },
   },
@@ -34,20 +34,20 @@ const teamMembers = [
     desc: 'Develops APIs and machine learning models for smart crop prediction and decision support.',
     image: Dipakimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dipakrajgiriiiiiiii',
-      facebook: 'https://facebook.com/dipakgiriiiiii',
-      github: 'https://github.com/dipakgiriiiiii',
+      linkedin: 'https://www.linkedin.com/in/dipak-raj-giri-970069234/',
+      facebook: 'https://www.facebook.com/dipak.rajgiri.393',
+      github: 'https://github.com/dipakgiri',
     },
   },
   {
-    name: 'Dilenara Singh Thagunna',
+    name: 'Dilendra Singh Thagunna',
     role: 'AI and ML Developer',
     desc: 'Builds and optimizes ML pipelines, with a passion for deep learning in agriculture.',
     image: Dilendraimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dilenaraaaaaa',
-      facebook: 'https://facebook.com/dilenarasinghhhhh',
-      github: 'https://github.com/dilenarasinghhhhhhh',
+      linkedin: 'https://www.linkedin.com/in/dipak-raj-giri-970069234/',
+      facebook: 'https://www.facebook.com/dilendra.singh.473610',
+      github: 'https://github.com/dilenarasingh',
     },
   },
 

@@ -24,35 +24,38 @@ function PestPredictorPage() {
     }));
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const payload = {
-        RF: parseFloat(formData.RF),
-        Temp_Max: parseFloat(formData.Temp_Max),
-        Temp_Min: parseFloat(formData.Temp_Min),
-        RH_I: parseFloat(formData.RH_I),
-        RH_II: parseFloat(formData.RH_II),
-        BSS: parseFloat(formData.BSS),
-        Wind_Velocity: parseFloat(formData.Wind_Velocity),
-      };
+const handleSubmit = async () => {
+  setLoading(true);
+  try {
+    const payload = {
+      RF: parseFloat(formData.RF),
+      Temp_Max: parseFloat(formData.Temp_Max),
+      Temp_Min: parseFloat(formData.Temp_Min),
+      RH_I: parseFloat(formData.RH_I),
+      RH_II: parseFloat(formData.RH_II),
+      BSS: parseFloat(formData.BSS),
+      Wind_Velocity: parseFloat(formData.Wind_Velocity),
+    };
 
-      const res = await axios.post('https://pest-ai.onrender.com/predict', payload);
+    const res = await axios.post('https://pest-ai.onrender.com/predict', payload);
 
-      const key = Object.keys(res.data).find((k) => k.startsWith('predicted_'));
-      if (key) {
-        const pestName = key.replace('predicted_', '');
-        setPredictedPest(pestName);
-      } else {
-        setPredictedPest('Unknown');
-      }
-    } catch (err) {
-      console.error(err);
-      setPredictedPest('Error');
-    } finally {
-      setLoading(false);
+    const pestKey = Object.keys(res.data).find((k) => k.startsWith('predicted_'));
+    if (pestKey) {
+      const pestName = pestKey.replace('predicted_', '');
+      const pestValue = res.data[pestKey];
+      const unit = res.data.unit || '';
+      setPredictedPest({ name: pestName, value: pestValue, unit });
+    } else {
+      setPredictedPest(null);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setPredictedPest('error');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div>
@@ -116,19 +119,28 @@ function PestPredictorPage() {
           )}
         </motion.button>
 
-        {/* Prediction Result */}
-        {predictedPest && (
-          <motion.div
-            className="mt-10 p-6 bg-white/80 rounded-xl shadow-inner border border-green-200 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <h3 className="text-2xl font-semibold text-green-700 mb-2">Prediction Result</h3>
-            <div className="text-3xl text-gray-800 font-bold">
-              🪲 {predictedPest}
-            </div>
-          </motion.div>
-        )}
+      {predictedPest && predictedPest !== 'error' && (
+  <motion.div
+    className="mt-10 p-6 bg-white/80 rounded-xl shadow-inner border border-green-200 text-center"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+  >
+    <h3 className="text-2xl font-semibold text-green-700 mb-2">Prediction Result</h3>
+    <div className="text-xl text-gray-800 font-semibold">
+      🪲 <span className="capitalize">{predictedPest.name}</span>
+    </div>
+    <div className="text-3xl text-green-800 font-bold mt-2">
+      {predictedPest.value} <span className="text-base font-medium text-gray-600">{predictedPest.unit}</span>
+    </div>
+  </motion.div>
+)}
+
+{predictedPest === 'error' && (
+  <div className="mt-6 text-center text-red-600 font-semibold">
+    ❌ Failed to get prediction. Please try again.
+  </div>
+)}
+
       </motion.div>
     </div>
     </div>
