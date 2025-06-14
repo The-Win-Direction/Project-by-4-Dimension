@@ -32,6 +32,9 @@ app.get('/', (req, res) => {
 const khetRoutes = require('./routes/khetRoutes');
 app.use('/api/khets', khetRoutes);
 
+const aiRoutes = require('./routes/aiRoutes');
+app.use('/api/ai', aiRoutes);
+
 
 
 /////////////////
