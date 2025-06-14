@@ -6,6 +6,7 @@ const AddCustomLog = ({ khetId }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    date: '',
   });
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const AddCustomLog = ({ khetId }) => {
         },
       });
       setSuccess(true);
-      setFormData({ title: '', description: '' });
+      setFormData({ title: '', description: '', date: '' });
       setPhoto(null);
     } catch (err) {
       console.error(err);
@@ -46,15 +47,82 @@ const AddCustomLog = ({ khetId }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-      <input type="text" name="title" placeholder="Log Title" value={formData.title} onChange={handleChange} className="border p-2 rounded w-full" required />
-      <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="border p-2 rounded w-full" rows="3" required></textarea>
-      <input type="file" accept="image/*" onChange={(e) => setPhoto(e.target.files[0])} className="block" />
-      <button type="submit" disabled={loading} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-        {loading ? 'Submitting...' : 'Submit Custom Log'}
-      </button>
-      {success && <p className="text-green-600">Log submitted successfully!</p>}
-      {error && <p className="text-red-600">{error}</p>}
+    <form
+      onSubmit={handleSubmit}
+      className="mt-8 bg-white p-6 rounded-xl shadow max-w-3xl mx-auto space-y-6 border border-green-200"
+    >
+      <h3 className="text-xl font-bold text-green-700">📝 Add Custom Field Log</h3>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Log Title</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="e.g., Irrigation Pipe Installation"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea
+            name="description"
+            placeholder="Add custom notes, observations, or events"
+            value={formData.description}
+            onChange={handleChange}
+            rows="4"
+            required
+            className="border p-2 rounded w-full"
+          ></textarea>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="border p-2 rounded w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Upload Photo (optional)</label>
+          <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded shadow">
+            📷 Choose Image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setPhoto(e.target.files[0])}
+              className="hidden"
+            />
+          </label>
+          {photo && (
+            <p className="mt-1 text-sm text-green-700">
+              Selected: <strong>{photo.name}</strong>
+            </p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+        >
+          {loading ? 'Submitting...' : 'Submit Custom Log'}
+        </button>
+
+        {success && (
+          <p className="text-green-600 mt-2 font-medium">✅ Custom log submitted successfully!</p>
+        )}
+        {error && <p className="text-red-600 mt-2">{error}</p>}
+      </div>
     </form>
   );
 };

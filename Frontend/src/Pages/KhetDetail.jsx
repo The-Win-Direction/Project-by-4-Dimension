@@ -6,6 +6,7 @@ import PestLogViewer from '../Components/KhetDetail/PestLogViewer'
 import EconomicLogViewer from '../Components/KhetDetail/EconomicLogViewer'
 import CustomLogViewer from '../Components/KhetDetail/CustomLogViewer'
 import CropLogViewer from '../Components/KhetDetail/CropLogViewer'
+import IrrigationLogViewer from '../Components/KhetDetail/IrrigationLogViewer'
 
 function KhetDetail() {
   return (
@@ -14,6 +15,7 @@ function KhetDetail() {
       <KhetInfo/>
       <LogOptions/>
       <CropLogViewer/>
+      <IrrigationLogViewer/>
       <SoilLogViewer />
       <PestLogViewer/>
       <EconomicLogViewer/>
