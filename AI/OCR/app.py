@@ -1,12 +1,7 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from PIL import Image
-import numpy as np
-import io
 import base64
 import requests
-
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
@@ -15,7 +10,7 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 GEMINI_API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
 GEMINI_MODEL_NAME = "gemini-1.5-flash"
 
-VISION_API_KEY = "AIzaSyBOOzipromkY_yua0tmpQmwc9xCeuGuANI"
+VISION_API_KEY = "AIzaSyCbnac7mOiOiQ2aoYeN9TbEsOW2n9o0LB8"
 VISION_API_URL = f"https://vision.googleapis.com/v1/images:annotate?key={VISION_API_KEY}"
 
 DEFAULT_VALUES = {
@@ -28,7 +23,7 @@ DEFAULT_VALUES = {
     "rainfall": 103.46
 }
 
-# LangChain + Gemini setup
+# Setup LangChain + Gemini
 llm = ChatGoogleGenerativeAI(
     model=GEMINI_MODEL_NAME,
     google_api_key=GEMINI_API_KEY,
@@ -48,7 +43,6 @@ response_schemas = [
 output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
 format_instructions = output_parser.get_format_instructions()
 
-# FastAPI app
 app = FastAPI(
     title="Soil Report OCR Extractor",
     description="Extracts N, P, K, temperature, humidity, pH, and rainfall from soil report image."
@@ -57,12 +51,16 @@ app = FastAPI(
 
 @app.post("/soil-ocr/")
 async def analyze_soil_image(file: UploadFile = File(...)):
+    # Validate file type (optional, you can expand)
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Uploaded file must be an image")
+
     try:
-        # Step 1: Read and convert image to base64
+        # Step 1: Read file bytes and convert to base64
         image_bytes = await file.read()
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
 
-        # Step 2: Call Google Vision OCR
+        # Step 2: Call Google Vision OCR API with retries and error handling
         vision_payload = {
             "requests": [
                 {
@@ -72,16 +70,29 @@ async def analyze_soil_image(file: UploadFile = File(...)):
             ]
         }
 
-        vision_response = requests.post(VISION_API_URL, json=vision_payload)
+        # Basic retry logic
+        max_retries = 3
+        for attempt in range(max_retries):
+            vision_response = requests.post(VISION_API_URL, json=vision_payload)
+            if vision_response.status_code == 200:
+                break
+        else:
+            raise Exception(f"Google Vision API failed after {max_retries} attempts with status {vision_response.status_code}")
+
         vision_result = vision_response.json()
 
+        # Check for API error response
         if "error" in vision_result.get("responses", [{}])[0]:
-            raise Exception(vision_result["responses"][0]["error"]["message"])
+            err_msg = vision_result["responses"][0]["error"]["message"]
+            raise Exception(f"Google Vision API error: {err_msg}")
 
         text_annotations = vision_result["responses"][0].get("textAnnotations", [])
         extracted_text = text_annotations[0]["description"] if text_annotations else ""
 
-        # Step 3: Prompt Gemini with the extracted text
+        if not extracted_text.strip():
+            raise Exception("No text detected in the image.")
+
+        # Step 3: Prepare prompt for Gemini LLM
         prompt = f"""
 You are a soil report analyzer.
 
@@ -103,11 +114,11 @@ Soil Report Text:
 {extracted_text}
         """
 
-        # Step 4: Get Gemini response
+        # Step 4: Call Gemini and parse response
         gemini_response = llm.invoke(prompt)
         structured_data = output_parser.parse(gemini_response.content)
 
-        # Step 5: Fill missing values
+        # Step 5: Fill missing or invalid values with defaults
         complete_data = {}
         for key, default in DEFAULT_VALUES.items():
             value = structured_data.get(key)
@@ -132,7 +143,6 @@ Soil Report Text:
         )
 
 
-# Optional for local testing (skip on Render)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
