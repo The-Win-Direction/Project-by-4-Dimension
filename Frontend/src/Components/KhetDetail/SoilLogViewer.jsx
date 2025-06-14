@@ -51,7 +51,7 @@ const SoilLogViewer = () => {
           {logs.map((log) => (
             <div
               key={log._id}
-              className="bg-gradient-to-br from-green-100 via-green-200 to-green-300 border border-green-200 shadow-sm rounded-xl overflow-hidden transform hover:scale-[1.02] hover:shadow-green-300 transition-all duration-300"
+               className="bg-gradient-to-br from-green-100 via-green-200 to-green-300 border border-green-200 shadow-sm rounded-xl overflow-hidden transform hover:scale-[1.02] hover:shadow-green-300 transition-all duration-300"
             >
               {log.photo && (
                 <div className="overflow-hidden">
