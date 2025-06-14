@@ -18,6 +18,25 @@ app.get('/', (req, res) => {
   res.send("Welcome to Hackfornepal Backend ");
 });
 
+///////////////
+
+
+
+// const uploadRoute = require('./routes/uploadRoute');
+
+
+// app.use('/api', uploadRoute);
+
+////////////////
+
+const khetRoutes = require('./routes/khetRoutes');
+app.use('/api/khets', khetRoutes);
+
+
+
+/////////////////
+
+
 // API Routes
 app.use('/api/auth/', authRoutes);
 
