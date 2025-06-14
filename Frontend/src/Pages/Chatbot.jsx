@@ -64,14 +64,14 @@ function ChatPage() {
   return (
     <div className='bg-green-50 h-[100vh]'>
       <Header />
-      <div className="bg-green-50 to-white  flex items-center justify-center px-4 ">
+      <div className="bg-green-50  flex items-center justify-center px-4 ">
         <div className="w-full max-w-6xl bg-white  shadow-2xl p-8">
           <h1 className="text-3xl font-semibold text-green-700 mb-6 text-center">
             🌿 KrishiGPT - Your Smart Agricultural Assistant
           </h1>
 
           {/* Chat Display */}
-          <div className="h-[400px] overflow-y-auto px-4 py-4 rounded-2xl bg-gray-100 border border-green-200 space-y-4">
+          <div className="h-[400px] overflow-y-auto px-4 py-4 rounded-2xl bg-green-100 border border-green-200 space-y-4">
             {messages.map((msg, index) => (
               <div
                 key={index}
