@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { FaLeaf, FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
+import { GiPlantRoots } from 'react-icons/gi';
+import { MdOutlineAgriculture } from 'react-icons/md';
 import Header from '../Components/Header';
 
 function CropPrediction() {
@@ -67,7 +70,6 @@ function CropPrediction() {
       const updated = {};
       const filled = [];
 
-      // Normalize all OCR keys to lowercase
       const normalizedParsed = {};
       Object.entries(parsed).forEach(([key, value]) => {
         normalizedParsed[key.toLowerCase()] = value;
@@ -117,71 +119,80 @@ function CropPrediction() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-green-100 to-lime-50 p-6 font-sans">
+    <div>
       <Header />
-      <div className="max-w-3xl mx-auto mt-6 bg-white shadow-xl rounded-2xl p-6">
-        <h2 className="text-3xl font-bold text-center text-green-700 mb-4">🌿 Crop Recommendation</h2>
+      <div className=" bg-green-50 font-sans px-4 py-10">
+        <div className="max-w-6xl mx-auto bg-white shadow-3xl  p-10 border border-green-300">
+          <h2 className="text-4xl font-extrabold text-center text-green-800 mb-6 flex items-center justify-center gap-3">
+            <MdOutlineAgriculture className="text-4xl" />
+            Crop Recommendation Tool
+          </h2>
 
-        <div className="flex justify-center mb-4">
-          <label className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg cursor-pointer shadow-md">
-            📷 Upload Soil Report
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-          </label>
-        </div>
+          <div className="flex justify-center mb-6">
+            <label className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl cursor-pointer shadow-lg flex items-center gap-2">
+              <FaCloudUploadAlt />
+              Upload Soil Report Image Directly Here
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            </label>
+          </div>
 
-        {ocrLoading && (
-          <p className="text-center text-sm text-green-600 mb-2">🔄 Analyzing image...</p>
-        )}
+          {ocrLoading && (
+            <p className="text-center text-sm text-green-600 mb-3 animate-pulse">🔍 Analyzing image...</p>
+          )}
 
-        {autoFilledFields.length > 0 && (
-          <p className="text-center text-sm text-gray-500 italic mb-4">
-            ✅ Autofilled values (corrected if out of range): {autoFilledFields.join(', ')}
-          </p>
-        )}
+          {autoFilledFields.length > 0 && (
+            <p className="text-center text-sm text-gray-600 italic mb-5">
+              ✅ Autofilled fields: {autoFilledFields.join(', ')}
+            </p>
+          )}
 
-        <div className="grid grid-cols-2 gap-4">
-          {Object.keys(fieldLabels).map((field) => (
-            <div key={field} className="flex flex-col">
-              <label htmlFor={field} className="mb-1 text-sm font-semibold text-gray-700">{fieldLabels[field]}</label>
-              <input
-                id={field}
-                name={field}
-                type="number"
-                value={formData[field]}
-                onChange={handleChange}
-                min={fieldLimits[field].min}
-                max={fieldLimits[field].max}
-                placeholder={`Enter ${fieldLabels[field]}`}
-                className={`border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 ${
-                  autoFilledFields.includes(field) ? 'border-green-400 bg-green-50' : 'border-gray-300'
-                }`}
-              />
-              <small className="text-xs text-gray-500">Range: {fieldLimits[field].min} - {fieldLimits[field].max}</small>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            {Object.keys(fieldLabels).map((field) => (
+              <div key={field} className="flex flex-col">
+                <label htmlFor={field} className="mb-1 text-sm font-semibold text-gray-700">
+                  {fieldLabels[field]}
+                </label>
+                <input
+                  id={field}
+                  name={field}
+                  type="number"
+                  value={formData[field]}
+                  onChange={handleChange}
+                  min={fieldLimits[field].min}
+                  max={fieldLimits[field].max}
+                  placeholder={`Enter ${fieldLabels[field]}`}
+                  className={`border-2 border-green-200 px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-150 ${
+                    autoFilledFields.includes(field) ? 'border-green-400 bg-green-50' : 'border-gray-300'
+                  }`}
+                />
+                <small className="text-xs text-gray-500">Range: {fieldLimits[field].min} - {fieldLimits[field].max}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={handleSubmit}
+              disabled={loading || ocrLoading}
+              className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-xl shadow-lg transition duration-200 disabled:opacity-50"
+            >
+              {loading ? '🔍 Predicting...' : '🌾 Get Recommendation Instantly'}
+            </button>
+          </div>
+
+          {prediction && (
+            <div className="mt-8 text-center text-2xl font-bold text-green-700 flex justify-center items-center gap-3">
+              <FaCheckCircle className="text-green-600" />
+              Recommended Crop: <span className="underline">{prediction}</span>
             </div>
-          ))}
+          )}
+
+          {error && (
+            <div className="text-center text-red-600 mt-6 font-medium">
+              {error}
+            </div>
+          )}
         </div>
-
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={handleSubmit}
-            disabled={loading || ocrLoading}
-            className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl shadow-lg transition duration-200 disabled:opacity-50"
-          >
-            {loading ? '🔍 Predicting...' : '🌾 Get Recommendation'}
-          </button>
-        </div>
-
-        {prediction && (
-          <div className="mt-6 text-center text-2xl font-semibold text-green-700">
-            ✅ Recommended Crop: <span className="font-bold underline">{prediction}</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center text-red-600 mt-4">
-            {error}
-          </div>
-        )}
       </div>
     </div>
   );
