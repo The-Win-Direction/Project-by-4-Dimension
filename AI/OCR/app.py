@@ -5,6 +5,7 @@ from PIL import Image
 import numpy as np
 import io
 import easyocr
+from fastapi.middleware.cors import CORSMiddleware
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
@@ -52,6 +53,17 @@ ocr_reader = easyocr.Reader(['en', 'ne'])
 app = FastAPI(
     title="Soil Report OCR Extractor",
     description="Extracts N, P, K, temperature, humidity, pH, and rainfall from soil report image."
+)
+
+
+
+# Allow access from any origin (CORS)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --- ROUTE ---
