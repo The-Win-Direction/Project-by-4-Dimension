@@ -14,6 +14,7 @@ import ProtectedRoute from './Components/ProtectedRoute';
 import SuccessStories from './Pages/SuccessStories';
 import KhetTracker from './Pages/KhetTracker';
 import DiseaseDetection from './Pages/DiseaseDetection';
+import KhetDetail from './Pages/KhetDetail';
 
 
 function App() {
@@ -99,6 +100,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/khet/:khetId" element={<ProtectedRoute><KhetDetail /></ProtectedRoute> } />
+
 
       </Routes>
     </Router>

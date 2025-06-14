@@ -55,7 +55,7 @@ const CreateKhet = () => {
         },
       });
       alert('Khet created successfully!');
-      fetchKhets(); // Refresh list
+      fetchKhets(); 
     } catch (error) {
       console.error(error);
       alert('Failed to create khet');
@@ -63,17 +63,18 @@ const CreateKhet = () => {
   };
 
   const fetchKhets = async () => {
-    try {
-      const res = await axios.get(`${BACKEND_BASE_URL}/api/khets`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setKhets(res.data.khets || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  try {
+    const res = await axios.get(`${BACKEND_BASE_URL}/api/khets`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setKhets(res.data || []);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
   useEffect(() => {
     fetchKhets();
