@@ -9,6 +9,7 @@ import CropLogViewer from '../Components/KhetDetail/CropLogViewer';
 import IrrigationLogViewer from '../Components/KhetDetail/IrrigationLogViewer';
 import AnalyzeLogs from '../Components/KhetDetail/AnalyzeLogs';
 import { useParams } from 'react-router-dom';
+import Footer from '../Components/Footer';
 
 function KhetDetail() {
   const { khetId } = useParams(); // ✅ Correctly getting from route
@@ -25,6 +26,7 @@ function KhetDetail() {
       <EconomicLogViewer />
       <CustomLogViewer />
       <AnalyzeLogs khetId={khetId} /> {/* ✅ Pass correct value here */}
+      <Footer/>
     </div>
   );
 }

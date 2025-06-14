@@ -31,6 +31,7 @@ function Header() {
     { to: '/ai', label: 'AI Tools' },
     { to: '/success-stories', label: 'Success Stories' },
     { to: '/about', label: 'About Us' },
+    { to: '/khet-defenders', label: 'Game' },
   ];
 
   return (
