@@ -32,14 +32,14 @@ const aiTools = [
     action: 'Forecast Prices',
   },
   {
-    title: '💬 AI Chatbot Assistant',
-    description:
-      'Have farming questions? Talk to our smart chatbot for guidance on crops, pests, fertilizers, government schemes, and more.',
-    route: 'pest-ai',
-    bg: 'from-purple-100 to-indigo-50',
-    icon: '🤖',
-    action: 'Chat with Assistant',
-  },
+  title: '🪲 Pest Prediction AI',
+  description:
+    'Enter current weather and environmental conditions to get the most likely pest prediction for your field.',
+  route: 'pest-ai',
+  bg: 'from-green-100 to-lime-50',
+  icon: '🌾',
+  action: 'Predict Pest',
+},
 ];
 
 function AI() {
