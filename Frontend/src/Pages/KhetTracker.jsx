@@ -1,13 +1,12 @@
 import React from 'react'
 import Header from '../Components/Header'
-import KhetInputForm from '../Components/Khet Tracker/KhetInput'
+import CreateKhet from '../Components/Khet Tracker/CreateKhet'
 
 function KhetTracker() {
   return (
     <div>
         <Header/>
-        <KhetInputForm/>
-      KHet tracekr
+        <CreateKhet/>
     </div>
   )
 }
