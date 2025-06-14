@@ -12,7 +12,7 @@ import CropPrediction from './Pages/CropPrediction';
 import ShareYourStory from './Pages/ShareYourStory';
 import ProtectedRoute from './Components/ProtectedRoute';
 import SuccessStories from './Pages/SuccessStories';
-
+import KhetTracker from './Pages/KhetTracker';
 import DiseaseDetection from './Pages/DiseaseDetection';
 
 
@@ -84,10 +84,18 @@ function App() {
         />
 
         <Route
-          path="/disease-detection"
+          path="/ai/disease-detection"
           element={
             <ProtectedRoute>
               <DiseaseDetection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/khet-tracker"
+          element={
+            <ProtectedRoute>
+              <KhetTracker />
             </ProtectedRoute>
           }
         />

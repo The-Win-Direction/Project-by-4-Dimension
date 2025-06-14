@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, NavLink } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import logo from '../assets/logo01.png';
-import { NavLink } from 'react-router-dom';
-
 
 function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,7 +13,6 @@ function Header() {
     navigate('/login');
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -27,66 +24,69 @@ function Header() {
   }, []);
 
   return (
-    <header className="bg-white shadow-md h-20 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center gap-12 justify-between">
-
-        {/* Logo Section */}
-        <div className="flex items-center gap-4">
-          <img src={logo} alt="Logo" className="h-16 w-16 object-cover rounded-full" />
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <div className="px-20 mx-auto  h-20 flex items-center justify-between">
+        
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="Logo" className="h-14 w-14 object-cover rounded-full" />
+          <span className="text-xl font-bold text-green-700">KrishiGPT</span>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex gap-16 text-lg font-medium text-gray-700">
-          {[
-            { to: '/', label: 'Home' },
-            { to: '/chatbot', label: 'Chatbot' },
-            { to: '/ai', label: 'AI' },
-            { to: '/about', label: 'About' },
-            { to: '/success-stories', label: 'Success Stories' },
+        {/* Right Side: Nav + Profile */}
+        <div className="flex items-center gap-16">
+          {/* Navigation */}
+          <nav className="flex gap-10 text-[16px] font-medium">
+            {[
+              { to: '/', label: 'Home' },
+              { to: '/chatbot', label: 'Chatbot' },
+              { to: '/ai', label: 'AI Tools' },
+              { to: '/success-stories', label: 'Success Stories' },
+              { to: '/about', label: 'About' },
+              { to: '/khet-tracker', label: 'Khet Tracker' },
+            ].map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `relative transition duration-200 pb-1 ${
+                    isActive
+                      ? 'text-green-700 font-semibold border-b-2 border-green-600'
+                      : 'text-gray-600 hover:text-green-700 hover:border-b-2 hover:border-green-400'
+                  }`
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
 
-            { to: '/disease-detection', label: 'Detection' },
-
-          ].map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                isActive
-                  ? 'border-b-2 border-green-600 text-green-700 transition'
-                  : 'hover:text-green-600 transition'
-              }
+          {/* Profile Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="text-[2.5rem] text-green-700 hover:text-green-800 transition"
             >
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+              <FaUserCircle />
+            </button>
 
-
-        {/* Profile Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="text-5xl text-green-700 cursor-pointer "
-          >
-            <FaUserCircle />
-          </button>
-
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg border rounded-md py-2 z-10">
-              <Link
-                to="/profile"
-                className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-              >
-                View Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-3 w-44 bg-white shadow-xl border rounded-xl py-2 z-20 animate-fade-in">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-green-50 text-gray-700 transition"
+                >
+                  👤 View Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 transition"
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
