@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Header from '../Components/Header'; // Add your header component here
+import { motion } from 'framer-motion';
 
 function PestPredictorPage() {
   const [formData, setFormData] = useState({
@@ -53,25 +55,33 @@ function PestPredictorPage() {
   };
 
   return (
-    <div className="bg-green-50 min-h-screen py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-        <h2 className="text-3xl font-bold text-green-700 mb-6 text-center">
-          🌿 Predict Most Likely Pest
+    <div>
+      <Header />
+    <div className="min-h-screen bg-green-50  px-4">
+
+      <motion.div
+        className="max-w-4xl mx-auto glassmorphic-card p-10 rounded-xl shadow-2xl backdrop-blur-md border border-green-200"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-4xl font-bold text-green-700 mb-10 text-center tracking-tight">
+          🐛 Pest Predictor
         </h2>
 
         {/* Input Form */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { name: 'RF', label: 'Rainfall (mm)', min: 0, max: 90.3 },
-            { name: 'Temp_Max', label: 'Max Temperature (°C)', min: 28, max: 36.6 },
-            { name: 'Temp_Min', label: 'Min Temperature (°C)', min: 10.18, max: 26.2 },
-            { name: 'RH_I', label: 'Relative Humidity - Morning (%)', min: 63.65, max: 92.8 },
-            { name: 'RH_II', label: 'Relative Humidity - Evening (%)', min: 31.25, max: 71.05 },
-            { name: 'BSS', label: 'Bright Sunshine (hours)', min: 1, max: 20.7 },
-            { name: 'Wind_Velocity', label: 'Wind Speed (km/h)', min: 0.55, max: 6.55 },
+            { name: 'RF', label: '🌧️ Rainfall (mm)', min: 0, max: 90.3 },
+            { name: 'Temp_Max', label: '🌡️ Max Temperature (°C)', min: 28, max: 36.6 },
+            { name: 'Temp_Min', label: '🌡️ Min Temperature (°C)', min: 10.18, max: 26.2 },
+            { name: 'RH_I', label: '💧 Humidity Morning (%)', min: 63.65, max: 92.8 },
+            { name: 'RH_II', label: '💧 Humidity Evening (%)', min: 31.25, max: 71.05 },
+            { name: 'BSS', label: '☀️ Bright Sunshine (hours)', min: 1, max: 20.7 },
+            { name: 'Wind_Velocity', label: '💨 Wind Speed (km/h)', min: 0.55, max: 6.55 },
           ].map((field) => (
             <div key={field.name}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-md font-medium text-green-800 mb-2">
                 {field.label}
               </label>
               <input
@@ -82,31 +92,45 @@ function PestPredictorPage() {
                 max={field.max}
                 value={formData[field.name]}
                 onChange={handleChange}
-                className="w-full border border-green-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full border border-green-300 rounded-xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
                 required
               />
             </div>
           ))}
         </div>
 
-        <button
+        {/* Predict Button */}
+        <motion.button
           onClick={handleSubmit}
           disabled={loading}
-          className="mt-6 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-xl w-full transition duration-200 disabled:opacity-50"
+          whileTap={{ scale: 0.95 }}
+          className="mt-10 w-full bg-gradient-to-r from-green-600 to-lime-500 hover:from-green-700 hover:to-lime-600 text-white text-lg font-semibold py-3 rounded-full shadow-md transition duration-300 disabled:opacity-50"
         >
-          {loading ? 'Predicting...' : 'Predict Pest'}
-        </button>
+          {loading ? (
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Predicting...</span>
+            </div>
+          ) : (
+            '🔍 Predict Pest'
+          )}
+        </motion.button>
 
         {/* Prediction Result */}
         {predictedPest && (
-          <div className="mt-8 text-center">
-            <h3 className="text-xl font-semibold text-green-700 mb-2">Predicted Pest:</h3>
-            <div className="text-2xl text-gray-800 font-bold">
+          <motion.div
+            className="mt-10 p-6 bg-white/80 rounded-xl shadow-inner border border-green-200 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <h3 className="text-2xl font-semibold text-green-700 mb-2">Prediction Result</h3>
+            <div className="text-3xl text-gray-800 font-bold">
               🪲 {predictedPest}
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
+    </div>
     </div>
   );
 }
