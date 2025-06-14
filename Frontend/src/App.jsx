@@ -17,6 +17,9 @@ import KhetTracker from './Pages/KhetTracker';
 import DiseaseDetection from './Pages/DiseaseDetection';
 import KhetDetail from './Pages/KhetDetail';
 
+import KhetDefendersPage from './Pages/KhetDefendersPage';
+
+
 
 function App() {
   return (
@@ -92,6 +95,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+          <Route path="/khet-defenders" element={<KhetDefendersPage />} />
+
 
         <Route
           path="/ai/disease-detection"
