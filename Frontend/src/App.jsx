@@ -9,6 +9,7 @@ import Login from './Pages/Login';
 import MarketPrice from './Pages/MarketPrice';
 import SignUp from './Pages/SignUp';
 import CropPrediction from './Pages/CropPrediction';
+import PestAi from './Pages/PestAi'
 import ShareYourStory from './Pages/ShareYourStory';
 import ProtectedRoute from './Components/ProtectedRoute';
 import SuccessStories from './Pages/SuccessStories';
@@ -72,6 +73,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CropPrediction />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="ai/pest-ai"
+          element={
+            <ProtectedRoute>
+              <PestAi />
             </ProtectedRoute>
           }
         />

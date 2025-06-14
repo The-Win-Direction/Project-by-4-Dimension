@@ -1,10 +1,10 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from PIL import Image
 import numpy as np
 import io
-import base64
 import requests
 
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -12,12 +12,11 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 # --- CONFIGURATION ---
 
+OCR_API_KEY = "helloworld"  # OCR.space free default key
+MODEL_NAME = "gemini-1.5-flash"
 GEMINI_API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
-GEMINI_MODEL_NAME = "gemini-1.5-flash"
 
-VISION_API_KEY = "AIzaSyBOOzipromkY_yua0tmpQmwc9xCeuGuANI"
-VISION_API_URL = f"https://vision.googleapis.com/v1/images:annotate?key={VISION_API_KEY}"
-
+# Default values based on your dataset
 DEFAULT_VALUES = {
     "N": 50.55,
     "P": 53.36,
@@ -30,7 +29,7 @@ DEFAULT_VALUES = {
 
 # LangChain + Gemini setup
 llm = ChatGoogleGenerativeAI(
-    model=GEMINI_MODEL_NAME,
+    model=MODEL_NAME,
     google_api_key=GEMINI_API_KEY,
     temperature=0.5
 )
@@ -55,33 +54,36 @@ app = FastAPI(
 )
 
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# --- ROUTE ---
+
 @app.post("/soil-ocr/")
 async def analyze_soil_image(file: UploadFile = File(...)):
     try:
-        # Step 1: Read and convert image to base64
+        # Step 1: Read and send image to OCR.space
         image_bytes = await file.read()
-        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+        response = requests.post(
+            'https://api.ocr.space/parse/image',
+            files={'filename': ('image.jpg', image_bytes)},
+            data={'apikey': OCR_API_KEY, 'language': 'eng'}
+        )
+        result = response.json()
 
-        # Step 2: Call Google Vision OCR
-        vision_payload = {
-            "requests": [
-                {
-                    "image": {"content": image_base64},
-                    "features": [{"type": "TEXT_DETECTION"}]
-                }
-            ]
-        }
+        if result.get("IsErroredOnProcessing"):
+            raise ValueError("OCR API Error: " + result.get("ErrorMessage", ["Unknown error"])[0])
 
-        vision_response = requests.post(VISION_API_URL, json=vision_payload)
-        vision_result = vision_response.json()
+        extracted_text = result['ParsedResults'][0]['ParsedText']
 
-        if "error" in vision_result.get("responses", [{}])[0]:
-            raise Exception(vision_result["responses"][0]["error"]["message"])
-
-        text_annotations = vision_result["responses"][0].get("textAnnotations", [])
-        extracted_text = text_annotations[0]["description"] if text_annotations else ""
-
-        # Step 3: Prompt Gemini with the extracted text
+        # Step 2: LLM prompt
         prompt = f"""
 You are a soil report analyzer.
 
@@ -94,8 +96,6 @@ From the following raw soil report text, extract the following values:
 - pH (soil pH level)
 - rainfall (in mm)
 
-If values in the soil report are in Nepali language, translate them into English.
-
 Use this format:
 {format_instructions}
 
@@ -103,11 +103,11 @@ Soil Report Text:
 {extracted_text}
         """
 
-        # Step 4: Get Gemini response
+        # Step 3: Invoke Gemini
         gemini_response = llm.invoke(prompt)
         structured_data = output_parser.parse(gemini_response.content)
 
-        # Step 5: Fill missing values
+        # Step 4: Fill missing fields with default values
         complete_data = {}
         for key, default in DEFAULT_VALUES.items():
             value = structured_data.get(key)
@@ -131,8 +131,8 @@ Soil Report Text:
             content={"status": "error", "message": str(e)}
         )
 
+# --- MAIN ENTRYPOINT ---
 
-# Optional for local testing (skip on Render)
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
