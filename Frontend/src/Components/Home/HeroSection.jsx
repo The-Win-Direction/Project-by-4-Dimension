@@ -4,7 +4,7 @@ import image from '../../assets/homepic.jpg';
 
 const HeroSection = () => {
   return (
-    <section className="bg-green-50 py-20 px-4">
+    <section className=" py-20 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-24">
         
         {/* Text Content */}
@@ -17,10 +17,10 @@ const HeroSection = () => {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
             <Link to='/ai' className="bg-green-600 text-white px-6 py-3 rounded-xl shadow hover:bg-green-700 transition">
-              Get Started
+              Get Started with AI Tools
             </Link>
             <Link to='/about' className="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-xl hover:bg-green-100 transition">
-              Learn More
+              Learn More About Us
             </Link>
           </div>
         </div>

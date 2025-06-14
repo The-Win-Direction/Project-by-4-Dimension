@@ -16,12 +16,15 @@ import SuccessStories from './Pages/SuccessStories';
 import KhetTracker from './Pages/KhetTracker';
 import DiseaseDetection from './Pages/DiseaseDetection';
 import KhetDetail from './Pages/KhetDetail';
+import Footer from './Components/Footer';
 
 
 function App() {
   return (
+    
     <Router>
       <Routes>
+        
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
