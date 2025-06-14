@@ -23,8 +23,8 @@ const teamMembers = [
     desc: 'Designs clean, user-centric interfaces and crafts responsive frontend architecture.',
     image: Dipaimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dipa-joshi',
-      facebook: 'https://facebook.com/dipajoshi',
+      linkedin: 'https://linkedin.com/in/dipa-joshiiiiiii',
+      facebook: 'https://facebook.com/dipajoshiiiiiiii',
       github: 'https://github.com/dipajoshi',
     },
   },
@@ -34,20 +34,20 @@ const teamMembers = [
     desc: 'Develops APIs and machine learning models for smart crop prediction and decision support.',
     image: Dipakimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dipakrajgiri',
-      facebook: 'https://facebook.com/dipakgiri',
-      github: 'https://github.com/dipakgiri',
+      linkedin: 'https://linkedin.com/in/dipakrajgiriiiiiiii',
+      facebook: 'https://facebook.com/dipakgiriiiiii',
+      github: 'https://github.com/dipakgiriiiiii',
     },
   },
   {
     name: 'Dilenara Singh Thagunna',
-    role: 'AI Developer',
+    role: 'AI and ML Developer',
     desc: 'Builds and optimizes ML pipelines, with a passion for deep learning in agriculture.',
     image: Dilendraimg,
     socials: {
-      linkedin: 'https://linkedin.com/in/dilenara',
-      facebook: 'https://facebook.com/dilenarasingh',
-      github: 'https://github.com/dilenarasingh',
+      linkedin: 'https://linkedin.com/in/dilenaraaaaaa',
+      facebook: 'https://facebook.com/dilenarasinghhhhh',
+      github: 'https://github.com/dilenarasinghhhhhhh',
     },
   },
 

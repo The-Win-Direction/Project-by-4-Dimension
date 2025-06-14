@@ -1,10 +1,11 @@
-import Header from '../Components/Header';
 import React, { useState } from 'react';
+import Header from '../Components/Header';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function DiseaseDetection() {
   const [dragging, setDragging] = useState(false);
-  const [prediction, setPrediction] = useState("");
+  const [prediction, setPrediction] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,9 +39,7 @@ function DiseaseDetection() {
 
     try {
       const res = await axios.post('https://vecrosoft-ai.onrender.com/predict/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       setPrediction(res.data);
     } catch (err) {
@@ -51,22 +50,30 @@ function DiseaseDetection() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white pb-10">
       <Header />
 
-      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg">
-        <h2 className="text-2xl font-semibold mb-6 text-center text-green-700">🌿 Upload Crop Image for Disease Detection</h2>
+      <motion.div
+        className="max-w-2xl mx-auto mt-12 p-8 bg-white rounded-2xl shadow-xl"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center text-green-700">
+          🌿 Upload Crop Image for Disease Detection
+        </h2>
 
         <form onSubmit={handleSubmit}>
-          <div
-            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-8 transition ${
+          <motion.div
+            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 transition-all ${
               dragging ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-100'
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            whileHover={{ scale: 1.02 }}
           >
-            <p className="text-gray-600 mb-2">Drag & drop image here</p>
+            <p className="text-gray-600 mb-3 text-lg">📷 Drag & drop your crop image here</p>
             <input
               type="file"
               accept="image/*"
@@ -76,51 +83,63 @@ function DiseaseDetection() {
             />
             <label
               htmlFor="file-input"
-              className="cursor-pointer bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+              className="cursor-pointer bg-green-600  text-white px-6 py-3 rounded-full hover:from-green-700 hover:to-lime-600 transition"
             >
               📁 Browse Image
             </label>
-          </div>
+          </motion.div>
 
           {file && (
-            <div className="mt-4">
-              <p className="text-sm text-gray-700 mb-2">Selected Image:</p>
+            <motion.div
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <p className="text-sm text-gray-700 mb-2 font-medium">🖼️ Preview:</p>
               <img
                 src={URL.createObjectURL(file)}
-                alt="Selected preview"
-                className="w-full max-h-64 object-contain border rounded-lg"
+                alt="Selected"
+                className="w-full max-h-72 object-contain border rounded-lg"
               />
-            </div>
+            </motion.div>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-6 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
+            className="w-full mt-8 bg-green-600 text-white py-3 rounded-full font-semibold hover:from-green-700 hover:to-lime-600 transition disabled:opacity-60"
           >
             {loading ? (
-              <div className="flex justify-center items-center space-x-2">
+              <div className="flex justify-center items-center space-x-3">
                 <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></span>
                 <span>Predicting...</span>
               </div>
             ) : (
-              "Predict"
+              "🧠 Predict Disease"
             )}
           </button>
         </form>
 
-        {prediction && (
-          <div className="mt-6 bg-green-50 border border-green-200 p-4 rounded">
-            <h3 className="text-lg font-medium text-green-700">Prediction Result</h3>
-            <p className="text-gray-800 mt-2">
-              <strong>Disease:</strong> {prediction.predicted_disease}
-            </p>
-            <p className="text-gray-800">
-              <strong>Probability:</strong> {prediction.probability.toFixed(2)}
-            </p>
-          </div>
-        )}
-      </div>
+        <AnimatePresence>
+          {prediction && (
+            <motion.div
+              className="mt-8 bg-green-50 border border-green-200 p-6 rounded-xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h3 className="text-xl font-semibold text-green-700 mb-2">📊 Prediction Result</h3>
+              <p className="text-gray-800 mb-1">
+                <strong>Disease:</strong> {prediction.predicted_disease}
+              </p>
+              <p className="text-gray-800">
+                <strong>Probability:</strong> {(prediction.probability * 100).toFixed(2)}%
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

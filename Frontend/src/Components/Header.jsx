@@ -26,11 +26,11 @@ function Header() {
 
   const navLinks = [
     { to: '/', label: 'Home' },
-    { to: '/chatbot', label: 'Chatbot' },
+    { to: '/khet-tracker', label: 'Khet Tracker' },
+    { to: '/chatbot', label: 'Rag AI' },
     { to: '/ai', label: 'AI Tools' },
     { to: '/success-stories', label: 'Success Stories' },
-    { to: '/about', label: 'About' },
-    { to: '/khet-tracker', label: 'Khet Tracker' },
+    { to: '/about', label: 'About Us' },
   ];
 
   return (

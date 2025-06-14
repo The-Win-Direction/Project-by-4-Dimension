@@ -13,12 +13,12 @@ function OurMission() {
         className="max-w-4xl mx-auto text-center space-y-6"
       >
         {/* Section Badge */}
-        <span className="text-sm uppercase font-semibold tracking-wider text-green-600 bg-green-100 px-4 py-1 rounded-full">
+        <span className="text-4xl uppercase font-semibold tracking-wider text-green-600 bg-green-100 px-4 py-1 rounded-full">
           Our Mission
         </span>
 
         {/* Quote */}
-        <h2 className="text-4xl md:text-5xl font-bold text-green-800 leading-tight">
+        <h2 className="text-4xl md:text-3xl font-bold text-green-800 leading-tight">
           To make smart agriculture accessible to every farmer — from local fields to national markets.
         </h2>
 
