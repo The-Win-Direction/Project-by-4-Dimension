@@ -8,7 +8,7 @@ from langchain_core.prompts import PromptTemplate
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-API_KEY = "your-google-api-key"
+API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"
 DB_FAISS_PATH = "vectorstore/db_faiss"
 MODEL_NAME = "gemini-1.5-flash"
 EMBEDDING_MODEL_NAME = "models/embedding-001"
