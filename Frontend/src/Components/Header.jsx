@@ -44,6 +44,7 @@ function Header() {
               { to: '/disease-detection', label: 'Detection' },
               { to: '/success-stories', label: 'Success Stories' },
               { to: '/about', label: 'About' },
+              { to: '/khet-tracker', label: 'Khet Tracker' },
             ].map(({ to, label }) => (
               <NavLink
                 key={to}
