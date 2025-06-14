@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
-import image from '../../assets/Homeimage.jpg';
+import image from '../../assets/homepic.jpg';
 
 const HeroSection = () => {
   return (
@@ -17,7 +17,7 @@ const HeroSection = () => {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
             <Link to='/ai' className="bg-green-600 text-white px-6 py-3 rounded-xl shadow hover:bg-green-700 transition">
-              Try Now
+              Get Started
             </Link>
             <Link to='/about' className="bg-white border border-green-600 text-green-600 px-6 py-3 rounded-xl hover:bg-green-100 transition">
               Learn More

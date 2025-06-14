@@ -5,28 +5,40 @@ import { motion } from 'framer-motion';
 
 const aiTools = [
   {
-    title: '🌾 Crop Type Prediction',
+    title: '🌱 Plant Disease Detection',
     description:
-      'Discover the most suitable crops for your land by analyzing soil health, pH levels, and climate. Boost your productivity and farm smarter with data-backed crop selection.',
+      'Upload an image of your crop, and our AI will detect signs of common plant diseases. Get instant diagnosis and prevention tips to save your yield.',
+    route: '/ai/disease-detection',
+    bg: 'from-red-100 to-pink-50',
+    icon: '🦠',
+    action: 'Detect Disease',
+  },
+  {
+    title: '🌾 Crop Type Recommendation',
+    description:
+      'Not sure what to plant? Based on your soil, location, and climate, our AI recommends the most profitable and sustainable crop choices.',
     route: '/ai/crop-prediction',
+    bg: 'from-yellow-100 to-green-50',
+    icon: '🌿',
+    action: 'Get Recommendation',
   },
   {
     title: '📈 Market Price Forecast',
     description:
-      'Plan your sales like a pro. Analyze historical price trends and region-specific market data to pinpoint the most profitable months to sell your harvest.',
+      'Track past trends and forecast future prices for your crops. Maximize profit by selling in the right month, at the right market.',
     route: '/ai/price-prediction',
-  },
-  {
-    title: '🧪 Fertilizer & Pesticide Suggestion',
-    description:
-      'Get AI-driven recommendations tailored to your crop and soil condition. Apply just the right amount of fertilizer and pesticide to maximize yield and reduce costs.',
-    route: '/ai/fertilizer-pesticide',
+    bg: 'from-blue-100 to-cyan-50',
+    icon: '📊',
+    action: 'Forecast Prices',
   },
   {
     title: '💬 AI Chatbot Assistant',
     description:
-      'Have questions about your crops or facing farm issues? Chat with our AI assistant anytime for instant support, tips, and troubleshooting.',
-    route: '/ai/chatbot',
+      'Have farming questions? Talk to our smart chatbot for guidance on crops, pests, fertilizers, government schemes, and more.',
+    route: '/chatbot',
+    bg: 'from-purple-100 to-indigo-50',
+    icon: '🤖',
+    action: 'Chat with Assistant',
   },
 ];
 
@@ -34,39 +46,45 @@ function AI() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-green-50">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <Header />
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-green-700 mb-4">
-             Smart Farming Starts Here
-          </h1>
-          <p className="text-gray-700 text-lg sm:text-xl max-w-3xl mx-auto">
-            Unlock the power of AI to make data-driven decisions on your farm. From crop selection to pricing strategy, plant care to instant advice — we’ve got you covered.
-          </p>
-        </div> */}
 
-        <h2 className="text-2xl font-semibold text-green-600 mb-8 text-center">
-          🌿 Explore Our AI Tools
-        </h2>
+      <div className="max-w-7xl mx-auto px-4 pt-4">
+        <motion.h2
+          className="text-4xl sm:text-3xl font-extrabold text-green-800 mb-8 text-center leading-tight"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          🌿 Smart AI Tools for Smarter Farming
+        </motion.h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
           {aiTools.map((tool, index) => (
             <motion.div
               key={index}
-              whileHover={{ scale: 1.03 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.15 }}
               onClick={() => navigate(tool.route)}
-              className="cursor-pointer bg-white border border-gray-100 hover:border-green-400 shadow-md hover:shadow-lg transition rounded-2xl p-6 group"
+              className={`cursor-pointer rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 p-7 border border-gray-100 bg-gradient-to-br ${tool.bg} group relative overflow-hidden`}
             >
-              <h3 className="text-xl font-semibold text-green-800 mb-3 group-hover:text-green-600 transition">
-                {tool.title}
-              </h3>
-              <p className="text-gray-600 text-[15px] leading-relaxed">
-                {tool.description}
-              </p>
-              <div className="mt-4 text-green-500 font-medium group-hover:underline">
-                Try Now →
+              <div className="absolute top-0 right-0 opacity-20 text-9xl pointer-events-none select-none">
+                {tool.icon}
+              </div>
+              <div className="relative z-10">
+                <div className="text-5xl mb-4">{tool.icon}</div>
+                <h3 className="text-2xl font-semibold text-green-800 group-hover:text-green-600 mb-3 transition">
+                  {tool.title}
+                </h3>
+                <p className="text-gray-700 text-base leading-relaxed mb-4">
+                  {tool.description}
+                </p>
+                <span className="text-green-600 font-semibold group-hover:underline">
+                  {tool.action} →
+                </span>
               </div>
             </motion.div>
           ))}

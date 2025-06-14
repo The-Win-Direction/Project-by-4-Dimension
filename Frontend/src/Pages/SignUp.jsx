@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
-import image from '../assets/signup.png';
+import image from '../assets/signup.jpg';
 import { BACKEND_BASE_URL } from '../config';
 
 export default function Signup() {
@@ -62,7 +62,7 @@ export default function Signup() {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-400"
-                placeholder="John Doe"
+                placeholder="Dipa Joshi"
               />
             </div>
 
