@@ -15,15 +15,7 @@ const khetSchema = new mongoose.Schema({
   soilType: String,
   irrigationSource: String,
   ownership: { type: String, enum: ['Owned', 'Leased'] },
-  photo: String,
-  enabledTracking: {
-    crop: Boolean,
-    soil: Boolean,
-    irrigation: Boolean,
-    pest: Boolean,
-    economic: Boolean,
-    custom: Boolean
-  }
+  photo: String
 }, { timestamps: true });
 
 module.exports = mongoose.model('Khet', khetSchema);

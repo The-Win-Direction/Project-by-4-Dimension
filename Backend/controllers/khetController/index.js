@@ -33,14 +33,7 @@ exports.createKhet = async (req, res) => {
       irrigationSource: req.body.irrigationSource,
       ownership: req.body.ownership,
       photo: photoUrl,
-      enabledTracking: {
-        crop: req.body.crop || false,
-        soil: req.body.soil || false,
-        irrigation: req.body.irrigation || false,
-        pest: req.body.pest || false,
-        economic: req.body.economic || false,
-        custom: req.body.custom || false
-      }
+      
     });
 
     await khet.save();
