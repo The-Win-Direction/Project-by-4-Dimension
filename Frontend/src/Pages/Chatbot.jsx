@@ -40,6 +40,7 @@ function ChatPage() {
 
       setMessages((prev) => [...prev, botMessage]);
       setQuery('');
+      console.log(res);
     } catch (error) {
       console.error('Error contacting the assistant:', error);
       setMessages((prev) => [

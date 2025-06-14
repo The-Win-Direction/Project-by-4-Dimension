@@ -4,7 +4,7 @@ import CreateKhet from '../Components/Khet Tracker/CreateKhet'
 
 function KhetTracker() {
   return (
-    <div>
+    <div className='bg-green-50'>
         <Header/>
         <CreateKhet/>
     </div>
