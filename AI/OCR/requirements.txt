@@ -1,9 +1,10 @@
 fastapi
 uvicorn[standard]
-easyocr
+pytesseract
+opencv-python
 pillow
 numpy
 langchain
 google-generativeai
 langchain-google-genai
-python-multipart  
+python-multipart

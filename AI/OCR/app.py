@@ -1,21 +1,21 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image
+import pytesseract
 import numpy as np
 import io
-import easyocr
-from fastapi.middleware.cors import CORSMiddleware
+import cv2
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 # --- CONFIGURATION ---
 
-API_KEY = "AIzaSyBK5gc2fbQAOBP218EAplCHdssNf7C3hm8"  # Replace with your real key
+API_KEY = "YOUR_GOOGLE_API_KEY"  # Replace with your real key
 MODEL_NAME = "gemini-1.5-flash"
 
-# Default values based on your dataset
 DEFAULT_VALUES = {
     "N": 50.55,
     "P": 53.36,
@@ -46,18 +46,13 @@ response_schemas = [
 output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
 format_instructions = output_parser.get_format_instructions()
 
-# EasyOCR setup
-ocr_reader = easyocr.Reader(['en', 'ne'])
-
 # FastAPI app
 app = FastAPI(
     title="Soil Report OCR Extractor",
     description="Extracts N, P, K, temperature, humidity, pH, and rainfall from soil report image."
 )
 
-
-
-# Allow access from any origin (CORS)
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -67,18 +62,17 @@ app.add_middleware(
 )
 
 # --- ROUTE ---
-
 @app.post("/soil-ocr/")
 async def analyze_soil_image(file: UploadFile = File(...)):
     try:
-        # Step 1: Read and preprocess image
+        # Step 1: Read and convert image
         image_bytes = await file.read()
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         image_np = np.array(image)
+        gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
 
-        # Step 2: OCR extraction
-        ocr_results = ocr_reader.readtext(image_np)
-        extracted_text = "\n".join([text for _, text, _ in ocr_results])
+        # Step 2: OCR extraction using pytesseract
+        extracted_text = pytesseract.image_to_string(gray)
 
         # Step 3: LLM prompt
         prompt = f"""
@@ -106,7 +100,7 @@ Soil Report Text:
         gemini_response = llm.invoke(prompt)
         structured_data = output_parser.parse(gemini_response.content)
 
-        # Step 5: Fill missing fields with default values
+        # Step 5: Fill missing values
         complete_data = {}
         for key, default in DEFAULT_VALUES.items():
             value = structured_data.get(key)
@@ -118,7 +112,6 @@ Soil Report Text:
                 except ValueError:
                     complete_data[key] = default
 
-        # Step 6: Return response
         return {
             "status": "success",
             "raw_text": extracted_text,
@@ -131,8 +124,6 @@ Soil Report Text:
             content={"status": "error", "message": str(e)}
         )
 
-# --- MAIN ENTRYPOINT ---
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
