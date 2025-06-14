@@ -84,7 +84,7 @@ function App() {
         />
 
         <Route
-          path="/disease-detection"
+          path="/ai/disease-detection"
           element={
             <ProtectedRoute>
               <DiseaseDetection />

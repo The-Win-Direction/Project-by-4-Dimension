@@ -41,7 +41,6 @@ function Header() {
               { to: '/', label: 'Home' },
               { to: '/chatbot', label: 'Chatbot' },
               { to: '/ai', label: 'AI Tools' },
-              { to: '/disease-detection', label: 'Detection' },
               { to: '/success-stories', label: 'Success Stories' },
               { to: '/about', label: 'About' },
               { to: '/khet-tracker', label: 'Khet Tracker' },
