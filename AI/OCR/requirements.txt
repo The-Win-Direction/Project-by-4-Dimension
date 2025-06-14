@@ -5,3 +5,4 @@ pillow
 numpy
 langchain
 google-generativeai
+langchain-google-genai
