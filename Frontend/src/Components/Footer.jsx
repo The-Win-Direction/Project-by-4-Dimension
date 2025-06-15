@@ -4,26 +4,22 @@ import logo from '../assets/logo01.png';
 
 function Footer() {
   return (
-    <footer className="bg-gray-700 text-white py-12 px-6 md:px-20 lg:px-36">
-      <div className="grid grid-cols-1 md:grid-cols-3 items-start gap-12 text-base text-center md:text-left">
+    <footer className="bg-gray-700 text-white py-8 px-6 md:px-20 lg:px-32">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
         
         {/* Logo & Description */}
-        <div className="space-y-4 flex flex-col items-center md:items-start">
-          {/* Logo and Title */}
-          <div className="flex flex-col items-center md:flex-row md:items-center md:justify-start gap-3">
-            <img src={logo} alt="FarmFuse Logo" className="w-20 h-20 object-cover" />
-            <h2 className="text-2xl font-bold tracking-wide text-white">FarmFuse</h2>
+        <div className="space-y-5 flex flex-col items-center md:items-start">
+          <div className="flex items-center gap-4">
+            <img src={logo} alt="KrishiGPT Logo" className="w-16 h-16 object-cover" />
+            <h2 className="text-2xl font-bold tracking-wide">KrishiGPT</h2>
           </div>
-          {/* Tagline */}
-          <p className="text-white leading-relaxed text-center md:text-left">
-            किसानको डिजिटल साथी
-          </p>
+          <p className="text-white text-sm md:text-base">किसानको डिजिटल साथी</p>
         </div>
 
         {/* Social Media */}
-        <div className="flex flex-col items-center mt-8 space-y-4">
-          <h3 className="text-2xl">Follow Us</h3>
-          <div className="flex gap-8 text-3xl">
+        <div className="flex flex-col items-center md:items-center gap-5">
+          <h3 className="text-xl font-semibold">Follow Us</h3>
+          <div className="flex gap-6 text-2xl">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition">
               <FaFacebookF />
             </a>
@@ -37,16 +33,16 @@ function Footer() {
         </div>
 
         {/* Contact Info */}
-        <div className="space-y-4 text-center mt-8 md:text-right">
-          <h3 className="font-semibold text-2xl">Contact Us</h3>
-          <p className="text-white">📧 support@farmfuse.ai</p>
-          <p className="text-white">📞 +977-9812345678</p>
+        <div className="space-y-4 flex flex-col items-center md:items-end text-sm md:text-base">
+          <h3 className="text-xl font-semibold">Contact Us</h3>
+          <p>📧 support@KrishiGPT.ai</p>
+          <p>📞 +977-9864311321</p>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="mt-10 border-t border-white/30 pt-6 text-center text-xl text-white">
-        © {new Date().getFullYear()} FarmFuse. All rights reserved.
+      <div className="mt-8 border-t border-white/20 pt-6 text-center text-md text-white/80">
+        © {new Date().getFullYear()} KrishiGPT. All rights reserved.
       </div>
     </footer>
   );

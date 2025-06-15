@@ -19,9 +19,9 @@ const stories = [
       '✅ Used weather and market insights',
       '✅ Reduced waste and improved timing', 
     ],
-    quote: '“FarmFuse जस्तो साथी भए पछि, अब डर छैन, भर छ।”',
+    quote: '“KrishiGPT जस्तो साथी भए पछि, अब डर छैन, भर छ।”',
     story:
-      'Before FarmFuse, I followed old planting patterns without knowing the market. Now I use FarmFuse\'s AI to decide what to plant and when. My income increased by 40% in just one season.',
+      'Before KrishiGPT, I followed old planting patterns without knowing the market. Now I use KrishiGPT\'s AI to decide what to plant and when. My income increased by 40% in just one season.',
   },
   {
     name: 'Sunita Karki',
@@ -35,7 +35,7 @@ const stories = [
     ],
     quote: '“अब मलाई लाग्छ, साँचो खेती भनेकै जानकारीसहितको खेती हो।”',
     story:
-      'FarmFuse helped me learn how to control pests naturally and understand when to sell for the best price. I now plan my farm around data, not guesswork.',
+      'KrishiGPT helped me learn how to control pests naturally and understand when to sell for the best price. I now plan my farm around data, not guesswork.',
   },
   {
     name: 'Hari Bahadur',
@@ -47,9 +47,9 @@ const stories = [
       '✅ Avoided off-season planting losses',
       '✅ Used simple tips from the platform every week',
     ],
-    quote: '“FarmFuse मेरो खेतको साथी मात्रै होइन, आम्दानी बढाउने उपाय पनि हो।”',
+    quote: '“KrishiGPT मेरो खेतको साथी मात्रै होइन, आम्दानी बढाउने उपाय पनि हो।”',
     story:
-      'FarmFuse’s AI crop suggestions helped me choose crops that fit my land and the season. I avoided losses during unexpected weather changes thanks to timely alerts and farming tips.',
+      'KrishiGPT’s AI crop suggestions helped me choose crops that fit my land and the season. I avoided losses during unexpected weather changes thanks to timely alerts and farming tips.',
   },
   {
     name: 'Manita Shrestha',
@@ -63,7 +63,7 @@ const stories = [
     ],
     quote: '“पहिला केवल मेहनत गर्थें, अहिले स्मार्ट खेती गर्छु।”',
     story:
-      'With FarmFuse, I learned to grow crops suitable for my soil and climate. My flowers are now in demand in local markets, and I feel more connected with my land.',
+      'With KrishiGPT, I learned to grow crops suitable for my soil and climate. My flowers are now in demand in local markets, and I feel more connected with my land.',
   },
 ];
 

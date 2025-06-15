@@ -29,7 +29,7 @@ function WhoWeAre() {
         >
           <h2 className="text-4xl font-bold text-green-700">Who We Are</h2>
           <p className="text-lg text-gray-700 leading-relaxed">
-            <span className="font-semibold text-black">FarmFuse</span> is an innovative agri-intelligence platform built for farmers, agri-businesses, and policy-makers.
+            <span className="font-semibold text-black">KrishiGpt</span> is an innovative agri-intelligence platform built for farmers, agri-businesses, and policy-makers.
             We blend the wisdom of traditional farming with the power of cutting-edge technology to help users make informed, profitable, and sustainable decisions.
           </p>
           <p className="text-lg text-gray-700 leading-relaxed">
