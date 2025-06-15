@@ -10,7 +10,7 @@ const HeroSection = () => {
         {/* Text Content */}
         <div className="text-center md:text-left">
           <h1 className="text-4xl sm:text-5xl font-bold text-green-800 leading-tight">
-            Smarter Farming Starts Here with <span className="text-green-600">Farmfuse</span>
+            Smarter Farming Starts Here with <span className="text-green-600">KrishiGPT</span>
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-gray-700">
             Harness the power of AI to predict crop prices, monitor plant health, and boost your farm’s profitability — all in one platform.
@@ -27,7 +27,7 @@ const HeroSection = () => {
 
         {/* Image */}
         <div className="flex  md:justify-end">
-          <img src={image} alt="Farmfuse AI Illustration" className="h-[20rem]  rounded-xl shadow-lg" />
+          <img src={image} alt="KrishiGPT AI Illustration" className="h-[20rem]  rounded-xl shadow-lg" />
         </div>
       </div>
     </section>
